@@ -29,7 +29,7 @@ export default function MerchantDashboard() {
     // Bids fetch
     const { data: myBidsData } = await supabase.from('bids').select('*').eq('merchant_id', localStorage.getItem('mandi_user_id'));
     if (myBidsData) {
-      const bidded = {};
+      const bidded: Record<string, boolean> = {};
       myBidsData.forEach(b => { bidded[b.lot_id] = true; });
       setBiddedLots(bidded);
     }
