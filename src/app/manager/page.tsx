@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import PriceHistory from "@/components/PriceHistory";
+import Modal from "@/components/Modal";
 import LotTimeline from "@/components/LotTimeline";
 import { formatLotId } from "@/lib/constants";
 import {
@@ -330,6 +331,9 @@ export default function ManagerDashboard() {
   // Dispute state
   const [disputes, setDisputes] = useState<Dispute[]>([]);
   const [disputeLoading, setDisputeLoading] = useState(false);
+  const [resolveModal, setResolveModal] = useState<string | null>(null);
+  const [resolutionText, setResolutionText] = useState("");
+
 
   // ─── Data Fetching ───────────────────────────────────────────────────────
 
@@ -500,9 +504,14 @@ export default function ManagerDashboard() {
   };
 
   const handleResolve = (id: string) => {
-    const resolution = window.prompt("Enter resolution details:");
-    if (resolution) {
-      updateDisputeStatus(id, "RESOLVED", resolution);
+    setResolveModal(id);
+    setResolutionText("");
+  };
+
+  const submitResolve = () => {
+    if (resolveModal && resolutionText.trim()) {
+      updateDisputeStatus(resolveModal, "RESOLVED", resolutionText);
+      setResolveModal(null);
     }
   };
 

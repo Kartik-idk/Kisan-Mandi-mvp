@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Modal from "@/components/Modal";
 import LotTimeline from "@/components/LotTimeline";
 import { formatLotId } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
@@ -162,6 +163,8 @@ export default function PalledarDashboard() {
   };
 
   const [toast, setToast] = useState<{msg: string, type: "success"|"error"} | null>(null);
+  const [completeModal, setCompleteModal] = useState<string | null>(null);
+
 
   useEffect(() => {
     fetchData();
@@ -208,52 +211,29 @@ export default function PalledarDashboard() {
   };
 
   const updateTaskStatus = async (taskId: string, newStatus: "IN_PROGRESS" | "COMPLETED") => {
-    // Add misclick prevention for COMPLETED
     if (newStatus === "COMPLETED") {
-      const confirm = window.confirm(lang === "EN" ? "Are you sure you want to complete this task?" : "क्या आप निश्चित रूप से यह काम पूरा करना चाहते हैं?");
-      if (!confirm) return;
+      setCompleteModal(taskId);
+      return;
     }
+    await executeUpdate(taskId, newStatus);
+  };
 
+  const executeUpdate = async (taskId: string, newStatus: "IN_PROGRESS" | "COMPLETED") => {
     setUpdating(taskId);
+    setCompleteModal(null);
 
     const updatePayload: any = { status: newStatus };
-
-    const { error } = await supabase
-      .from("work_tasks")
-      .update(updatePayload)
-      .eq("id", taskId);
+    const { error } = await supabase.from("work_tasks").update(updatePayload).eq("id", taskId);
 
     if (!error) {
       setToast({ msg: lang === "EN" ? "Task updated successfully!" : "कार्य सफलतापूर्वक अपडेट किया गया!", type: "success" });
-      setTasks((prev) =>
-        prev.map((t) => (t.id === taskId ? { ...t, ...updatePayload } : t))
-      );
+      setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, ...updatePayload } : t)));
     } else {
-      setToast({ msg: lang === "EN" ? "Failed to update task" : "अपडेट विफल रहा", type: "error" });
+      setToast({ msg: "Error updating task", type: "error" });
     }
-
     setUpdating(null);
   };
 
-  // --- Loading State ---
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-4 space-y-4 pt-20">
-        <div className="h-24 bg-gray-200 rounded-2xl animate-pulse"></div>
-        <div className="h-48 bg-gray-200 rounded-2xl animate-pulse"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="p-8 text-center text-red-500">
-        Error: Palledar account not found. Did you run the seed script?
-      </div>
-    );
-  }
-
-  // --- Derived Data ---
   const activeTasks = tasks.filter((t) => t.status === "PENDING" || t.status === "IN_PROGRESS");
   const completedTasks = tasks.filter((t) => t.status === "COMPLETED");
 
@@ -282,8 +262,8 @@ export default function PalledarDashboard() {
             >
               {lang === "EN" ? "हिंदी" : lang === "HI" ? "ಕನ್ನಡ" : "English"}
             </button>
-            <div className="text-sm bg-emerald-700 px-4 py-2 rounded-md font-bold shadow-sm hover:shadow-full border border-emerald-500">
-              {user.name}
+            <div className="text-sm bg-emerald-700 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow-full border border-emerald-500">
+              {user?.name}
             </div>
           </div>
         </div>
@@ -312,7 +292,7 @@ export default function PalledarDashboard() {
             </div>
 
             {tasks.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500">
+              <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
                 <ClipboardList className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                 <p className="text-gray-700 font-medium">{t[lang].noTasksTitle}</p>
                 <p className="text-sm text-gray-800 mt-1 px-4">
@@ -375,7 +355,7 @@ export default function PalledarDashboard() {
 
             {/* KPI Cards */}
             <div className="grid grid-cols-3 gap-3 mb-8">
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 p-4 text-center">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
                 <div className="inline-flex items-center justify-center bg-emerald-100 p-2 rounded-full mb-2">
                   <IndianRupee className="h-4 w-4 text-emerald-800" />
                 </div>
@@ -384,7 +364,7 @@ export default function PalledarDashboard() {
                   {t[lang].totalEarned}
                 </div>
               </div>
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 p-4 text-center">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
                 <div className="inline-flex items-center justify-center bg-yellow-100 p-2 rounded-full mb-2">
                   <Clock className="h-4 w-4 text-yellow-600" />
                 </div>
@@ -393,7 +373,7 @@ export default function PalledarDashboard() {
                   {t[lang].pendingPay}
                 </div>
               </div>
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 p-4 text-center">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
                 <div className="inline-flex items-center justify-center bg-green-100 p-2 rounded-full mb-2">
                   <CheckCircle2 className="h-4 w-4 text-green-800" />
                 </div>
@@ -409,7 +389,7 @@ export default function PalledarDashboard() {
               {t[lang].paymentHistory}
             </h2>
             {completedTasks.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500">
+              <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
                 <Wallet className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                 <p className="text-gray-700 font-medium">No Earnings Yet</p>
                 <p className="text-sm text-gray-800 mt-1 px-4">
@@ -421,7 +401,7 @@ export default function PalledarDashboard() {
                 {completedTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 p-4"
+                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-4"
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex items-start gap-3">
@@ -490,13 +470,13 @@ export default function PalledarDashboard() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-6">{t[lang].profile}</h1>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               {/* Profile Header */}
               <div className="bg-emerald-600 p-6 flex flex-col items-center text-white">
                 <div className="bg-white p-4 rounded-full mb-3 text-emerald-800">
                   <User className="h-10 w-10" />
                 </div>
-                <h2 className="text-xl font-bold">{user.name}</h2>
+                <h2 className="text-xl font-bold">{user?.name}</h2>
                 <p className="text-emerald-100 opacity-90">Registered Palledar</p>
               </div>
 
@@ -530,13 +510,13 @@ export default function PalledarDashboard() {
               </div>
 
               {/* Sign Out */}
-              <div className="p-4 border-t border-gray-400 text-gray-900 placeholder-gray-500">
+              <div className="p-4 border-t border-gray-200">
                 <button
                   onClick={() => {
                     localStorage.removeItem("mandi_user_palledar");
                     window.location.href = "/";
                   }}
-                  className="w-full py-3 bg-red-100 border border-red-300 text-red-800 font-semibold rounded-xl  hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-red-100 border border-red-300 text-red-800 font-semibold rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
                 >
                   <LogOut className="h-4 w-4" />
                   {t[lang].signOut}
@@ -546,6 +526,36 @@ export default function PalledarDashboard() {
           </div>
         )}
       </main>
+
+      <Modal 
+        isOpen={!!completeModal} 
+        onClose={() => setCompleteModal(null)} 
+        title={lang === "EN" ? "Complete Task" : "कार्य पूरा करें"}
+      >
+        <div className="space-y-4">
+          <p className="text-slate-600">
+            {lang === "EN" 
+              ? "Are you sure you want to mark this task as completed? This will finalize the labor record." 
+              : "क्या आप निश्चित रूप से यह काम पूरा करना चाहते हैं?"}
+          </p>
+
+          <div className="flex gap-3 pt-4 border-t border-slate-100">
+            <button 
+              onClick={() => setCompleteModal(null)}
+              className="flex-1 bg-white border border-slate-300 text-slate-700 py-2.5 rounded-lg hover:bg-slate-50 transition-colors font-medium"
+            >
+              {lang === "EN" ? "Cancel" : "रद्द करें"}
+            </button>
+            <button 
+              onClick={() => completeModal && executeUpdate(completeModal, "COMPLETED")}
+              className="flex-1 bg-emerald-600 text-white py-2.5 rounded-lg hover:bg-emerald-700 transition-colors font-medium"
+            >
+              {lang === "EN" ? "Complete Task" : "पूरा करें"}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 w-full bg-white border-t flex justify-around p-3 pb-safe shadow-[0_-5px_10px_-5px_rgba(0,0,0,0.05)] z-50">
@@ -610,7 +620,7 @@ function TaskCard({
   const isUpdating = updating === task.id;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <div className="p-4">
         {/* Top row: task type badge + status badge */}
         <div className="flex justify-between items-center mb-3">
@@ -670,7 +680,7 @@ function TaskCard({
           <button
             disabled={isUpdating}
             onClick={() => onUpdateStatus(task.id, "COMPLETED")}
-            className="w-full py-2.5 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+            className="w-full py-2.5 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
           >
             {isUpdating ? (
               <Loader2 className="h-4 w-4 animate-spin" />

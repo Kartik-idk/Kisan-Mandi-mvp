@@ -255,7 +255,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Buyer (Merchant)</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-md shadow-sm p-2 border focus:ring-indigo-500"
+                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
                   value={selectedMerchant}
                   onChange={(e) => setSelectedMerchant(e.target.value)}
                 >
@@ -270,7 +270,7 @@ export default function AgentDashboard() {
                 <input 
                   type="number" 
                   required
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-md shadow-sm p-2 border focus:ring-indigo-500"
+                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
                   value={pricePerQuintal}
                   onChange={(e) => setPricePerQuintal(e.target.value)}
                 />
@@ -280,13 +280,13 @@ export default function AgentDashboard() {
                 <input 
                   type="number" 
                   required
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-md shadow-sm p-2 border focus:ring-indigo-500"
+                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
                   value={deductions}
                   onChange={(e) => setDeductions(e.target.value)}
                 />
               </div>
               
-              <div className="bg-gray-50 p-3 rounded-lg border border-gray-400 text-gray-900 placeholder-gray-500 mt-4 space-y-2">
+              <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 mt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-700">Total Amount:</span>
                   <span className="font-medium text-gray-900">₹{((parseFloat(pricePerQuintal) || 0) * (auctioningLot.weight_kg / 100)).toFixed(2)}</span>
@@ -305,14 +305,14 @@ export default function AgentDashboard() {
                 <button 
                   type="button" 
                   onClick={() => setAuctioningLot(null)}
-                  className="flex-1 bg-white border border-gray-400 text-gray-900 placeholder-gray-500 text-gray-700 py-2 rounded-md hover:bg-gray-50 transition"
+                  className="flex-1 bg-white border border-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
                   disabled={formLoading}
-                  className="flex-1 bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
+                  className="flex-1 bg-green-600 text-white py-2 rounded-lg-lg-lg hover:bg-green-700 transition"
                 >
                   Confirm Sale
                 </button>
@@ -334,7 +334,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Select Palledar</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-md shadow-sm p-2 border focus:ring-emerald-500"
+                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
                   value={selectedPalledar}
                   onChange={(e) => setSelectedPalledar(e.target.value)}
                   required
@@ -348,7 +348,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Task Type</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-md shadow-sm p-2 border focus:ring-emerald-500"
+                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
                   value={taskType}
                   onChange={(e) => setTaskType(e.target.value)}
                 >
@@ -363,7 +363,7 @@ export default function AgentDashboard() {
                 <input 
                   type="number" 
                   required
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-md shadow-sm p-2 border focus:ring-emerald-500"
+                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
                   value={taskPayment}
                   onChange={(e) => setTaskPayment(e.target.value)}
                 />
@@ -372,14 +372,14 @@ export default function AgentDashboard() {
                 <button 
                   type="button" 
                   onClick={() => setTaskModal(null)}
-                  className="flex-1 bg-white border border-gray-400 text-gray-900 placeholder-gray-500 text-gray-700 py-2 rounded-md hover:bg-gray-50 transition"
+                  className="flex-1 bg-white border border-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
                   disabled={formLoading}
-                  className="flex-1 bg-emerald-600 text-white py-2 rounded-md hover:bg-emerald-700 transition"
+                  className="flex-1 bg-emerald-600 text-white py-2 rounded-lg-lg-lg hover:bg-emerald-700 transition"
                 >
                   Assign Task
                 </button>
@@ -419,7 +419,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Select Farmer</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-md shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
                   value={farmerId}
                   onChange={(e) => setFarmerId(e.target.value)}
                   required
@@ -434,7 +434,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Crop Type</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-md shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
                   value={cropType}
                   onChange={(e) => setCropType(e.target.value)}
                 >
@@ -450,7 +450,7 @@ export default function AgentDashboard() {
                 <input 
                   type="number"
                   placeholder="e.g. 500"
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-md shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
                   required
@@ -460,7 +460,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Quality Grade</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-md shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
                   value={quality}
                   onChange={(e) => setQuality(e.target.value)}
                 >
@@ -473,7 +473,7 @@ export default function AgentDashboard() {
               <button 
                 type="submit" 
                 disabled={formLoading}
-                className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition disabled:opacity-50"
+                className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg-lg-lg hover:bg-indigo-700 transition disabled:opacity-50"
               >
                 {formLoading ? "Saving..." : "Register Lot Entry"}
               </button>
@@ -529,12 +529,12 @@ export default function AgentDashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                           {lot.status === 'ARRIVED' && (
-                            <button onClick={() => updateLotStatus(lot.id, 'WEIGHED')} className="text-indigo-800 hover:text-indigo-900 bg-indigo-100 border border-indigo-300 px-4 py-2 rounded-md font-bold shadow-sm hover:shadow">
+                            <button onClick={() => updateLotStatus(lot.id, 'WEIGHED')} className="text-indigo-800 hover:text-indigo-900 bg-indigo-100 border border-indigo-300 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow">
                               Mark Weighed
                             </button>
                           )}
                           {lot.status === 'WEIGHED' && (
-                            <button onClick={() => setAuctioningLot(lot)} className="text-green-800 hover:text-green-900 bg-green-100 border border-green-300 px-4 py-2 rounded-md font-bold shadow-sm hover:shadow">
+                            <button onClick={() => setAuctioningLot(lot)} className="text-green-800 hover:text-green-900 bg-green-100 border border-green-300 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow">
                               Auction Lot
                             </button>
                           )}
@@ -542,7 +542,7 @@ export default function AgentDashboard() {
                             <span className="text-gray-800">Sold</span>
                           )}
                           {lot.status === 'AUCTIONED' && lot.dispatch_status === 'READY' && (
-                            <button onClick={() => updateLotStatus(lot.id, 'DISPATCHED')} className="text-blue-800 hover:text-blue-900 bg-blue-100 border border-blue-300 px-4 py-2 rounded-md font-bold shadow-sm hover:shadow">
+                            <button onClick={() => updateLotStatus(lot.id, 'DISPATCHED')} className="text-blue-800 hover:text-blue-900 bg-blue-100 border border-blue-300 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow">
                               Approve Dispatch
                             </button>
                           )}
@@ -550,9 +550,9 @@ export default function AgentDashboard() {
                             <span className="text-blue-800 font-bold">Dispatched 🚚</span>
                           )}
                           {tasks.some(t => t.lot_id === lot.id) ? (
-                            <span className="text-gray-800 bg-gray-50 px-4 py-2 rounded-md font-bold shadow-sm hover:shadow border border-gray-400 text-gray-900 placeholder-gray-500">Palledar Assigned</span>
+                            <span className="text-gray-800 bg-gray-50 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow border-slate-200">Palledar Assigned</span>
                           ) : (
-                            <button onClick={() => setTaskModal(lot)} className="text-emerald-800 hover:text-emerald-900 bg-emerald-100 border border-emerald-300 px-4 py-2 rounded-md font-bold shadow-sm hover:shadow">
+                            <button onClick={() => setTaskModal(lot)} className="text-emerald-800 hover:text-emerald-900 bg-emerald-100 border border-emerald-300 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow">
                               Assign Palledar
                             </button>
                           )}
@@ -614,7 +614,7 @@ export default function AgentDashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                           {task.status === 'COMPLETED' && task.payment_status === 'UNPAID' && (
-                            <button onClick={() => markTaskPaid(task.id)} className="text-emerald-800 hover:text-emerald-900 bg-emerald-100 border border-emerald-300 px-4 py-2 rounded-md font-bold shadow-sm hover:shadow">
+                            <button onClick={() => markTaskPaid(task.id)} className="text-emerald-800 hover:text-emerald-900 bg-emerald-100 border border-emerald-300 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow">
                               Mark Paid
                             </button>
                           )}

@@ -195,9 +195,9 @@ export default function FarmerDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 p-4 space-y-4 pt-20">
-        <div className="h-24 bg-gray-200 rounded-2xl animate-pulse"></div>
-        <div className="h-48 bg-gray-200 rounded-2xl animate-pulse"></div>
-        <div className="h-48 bg-gray-200 rounded-2xl animate-pulse"></div>
+        <div className="h-24 bg-gray-200 rounded-xl animate-pulse"></div>
+        <div className="h-48 bg-gray-200 rounded-xl animate-pulse"></div>
+        <div className="h-48 bg-gray-200 rounded-xl animate-pulse"></div>
       </div>
     );
   }
@@ -220,11 +220,11 @@ export default function FarmerDashboard() {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setLang(lang === "EN" ? "HI" : lang === "HI" ? "KN" : "EN")}
-              className="text-sm bg-green-800 hover:bg-green-900 px-2 py-1 rounded border border-green-500 transition"
+              className="text-sm bg-green-800 hover:bg-green-900 px-2 py-1 rounded-lg border border-green-500 transition"
             >
               {lang === "EN" ? "हिंदी" : lang === "HI" ? "ಕನ್ನಡ" : "English"}
             </button>
-            <div className="text-sm bg-green-700 px-4 py-2 rounded-md font-bold shadow-sm hover:shadow-full border border-green-500">
+            <div className="text-sm bg-green-700 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow-full border border-green-500">
               {farmer.name}
             </div>
           </div>
@@ -250,7 +250,7 @@ export default function FarmerDashboard() {
 
             <div className="space-y-4">
               {lots.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500">
+                <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
                   <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-700">{t[lang].noLotsTitle}</p>
                   <p className="text-sm text-gray-800 mt-1">{t[lang].noLotsDesc}</p>
@@ -270,7 +270,7 @@ export default function FarmerDashboard() {
              
              <div className="space-y-4">
                 {transactions.length === 0 ? (
-                  <div className="text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500">
+                  <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
                     <FileText className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                     <p className="text-gray-700 font-medium">{t[lang].noReceiptsTitle}</p>
                     <p className="text-sm text-gray-800 mt-2 px-4">
@@ -279,7 +279,7 @@ export default function FarmerDashboard() {
                   </div>
                 ) : (
                   transactions.map(tx => (
-                    <div key={tx.id} className="bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 overflow-hidden">
+                    <div key={tx.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                       <div className="bg-green-600 p-4 text-white flex justify-between items-center">
                         <div className="flex items-center gap-2">
                           <CheckCircle2 className="h-5 w-5" />
@@ -287,14 +287,14 @@ export default function FarmerDashboard() {
                         </div>
                         <div className="flex gap-2 items-center">
                           <button onClick={() => setDisputeModal(tx.lots)} className="text-xs text-white/80 hover:text-white underline">Dispute</button>
-                          <span className="text-sm bg-green-700 px-2 py-1 rounded border border-green-500">
+                          <span className="text-sm bg-green-700 px-2 py-1 rounded-lg border border-green-500">
                             {new Date(tx.created_at).toLocaleDateString()}
                           </span>
                         </div>
                       </div>
                       
                       <div className="p-4 space-y-3">
-                        <div className="flex justify-between items-center pb-3 border-b border-gray-400 text-gray-900 placeholder-gray-500">
+                        <div className="flex justify-between items-center pb-3 border-b border-gray-200">
                           <div>
                             <p className="text-sm text-gray-700">Crop Details</p>
                             <p className="font-bold text-gray-900">{tx.lots?.crop_type} - {tx.lots?.weight_kg}kg</p>
@@ -310,7 +310,7 @@ export default function FarmerDashboard() {
                           <span className="font-medium text-gray-900">₹{tx.total_amount}</span>
                         </div>
                         
-                        <div className="flex justify-between items-center text-sm text-red-500 border-b border-gray-400 text-gray-900 placeholder-gray-500 pb-3">
+                        <div className="flex justify-between items-center text-sm text-red-500 border-b border-gray-200 pb-3">
                           <span>Deductions (Fees/Labour):</span>
                           <span>- ₹{tx.deductions}</span>
                         </div>
@@ -345,7 +345,7 @@ export default function FarmerDashboard() {
           <div>
              <h1 className="text-2xl font-bold text-gray-900 mb-6">{t[lang].profile}</h1>
              
-             <div className="bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 overflow-hidden">
+             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="bg-green-600 p-6 text-center text-white">
                   <div className="w-20 h-20 bg-white rounded-full mx-auto mb-3 flex items-center justify-center shadow-md">
                     <User className="h-10 w-10 text-green-800" />
@@ -372,10 +372,10 @@ export default function FarmerDashboard() {
                   </div>
                 </div>
                 
-                <div className="p-4 border-t border-gray-400 text-gray-900 placeholder-gray-500">
+                <div className="p-4 border-t border-gray-200">
                   <button 
                     onClick={() => window.location.href = "/"}
-                    className="w-full py-3 bg-red-100 border border-red-300 text-red-800 font-semibold rounded-xl  hover:bg-red-100 transition-colors"
+                    className="w-full py-3 bg-red-100 border border-red-300 text-red-800 font-semibold rounded-lg hover:bg-red-100 transition-colors"
                   >
                     Sign Out
                   </button>
@@ -389,7 +389,7 @@ export default function FarmerDashboard() {
       {/* Dispute Modal */}
       {disputeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="bg-red-600 p-4 text-white flex items-center gap-2">
               <AlertCircle className="h-5 w-5" />
               <h3 className="font-bold text-lg">Raise a Dispute</h3>
@@ -428,14 +428,14 @@ export default function FarmerDashboard() {
                 <button 
                   type="button" 
                   onClick={() => setDisputeModal(null)}
-                  className="flex-1 bg-white border border-gray-400 text-gray-900 placeholder-gray-500 text-gray-700 py-3 rounded-xl hover:bg-gray-50 transition font-medium"
+                  className="flex-1 bg-white border border-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition font-medium"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
                   disabled={formLoading}
-                  className="flex-1 bg-red-600 text-white py-3 rounded-xl hover:bg-red-700 transition font-medium disabled:opacity-50"
+                  className="flex-1 bg-red-600 text-white py-3 rounded-lg-lg-xl hover:bg-red-700 transition font-medium disabled:opacity-50"
                 >
                   {formLoading ? "Submitting..." : "Submit Dispute"}
                 </button>
@@ -487,7 +487,7 @@ function LotCard({ lot, setDisputeModal, setActiveTab, t }: { lot: any, setDispu
   const isAuctioned = lot.status === "AUCTIONED" || lot.status === "DISPATCHED";
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <div className="p-4 border-b border-gray-200 flex justify-between items-start">
         <div>
           <div className="flex items-center gap-2"><h3 className="font-bold text-gray-900 text-lg">{lot.crop_type}</h3><span className="text-xs font-mono bg-gray-200 text-gray-700 px-2 py-0.5 rounded">{formatLotId(lot.id)}</span></div>
@@ -503,7 +503,7 @@ function LotCard({ lot, setDisputeModal, setActiveTab, t }: { lot: any, setDispu
         <LotTimeline status={lot.status} dispatchStatus={lot.dispatch_status} />
         
         {isAuctioned && (
-          <div className="mt-4 pt-4 border-t border-dashed border-gray-400 text-gray-900 placeholder-gray-500 flex justify-between items-center">
+          <div className="mt-4 pt-4 border-t border-dashed border-gray-200 flex justify-between items-center">
             <div className="flex items-center text-green-800 gap-1.5">
               <CheckCircle2 className="h-4 w-4" />
               <span className="text-sm font-medium">{t.receiptReady}</span>
