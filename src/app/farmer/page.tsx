@@ -224,7 +224,7 @@ export default function FarmerDashboard() {
                   <p className="text-sm text-gray-800 mt-1">{t[lang].noLotsDesc}</p>
                 </div>
               ) : (
-                lots.map((lot) => <LotCard key={lot.id} lot={lot} setDisputeModal={setDisputeModal} t={t[lang]} />)
+                lots.map((lot) => <LotCard key={lot.id} lot={lot} setDisputeModal={setDisputeModal} setActiveTab={setActiveTab} t={t[lang]} />)
               )}
             </div>
           </>
@@ -449,7 +449,7 @@ export default function FarmerDashboard() {
 }
 
 // Helper Component for the Lot Card
-function LotCard({ lot, setDisputeModal, t }: { lot: any, setDisputeModal: (lot: any) => void, t: any }) {
+function LotCard({ lot, setDisputeModal, setActiveTab, t }: { lot: any, setDisputeModal: (lot: any) => void, setActiveTab: (tab: any) => void, t: any }) {
   const isArrived = lot.status === "ARRIVED";
   const isWeighed = lot.status === "WEIGHED";
   const isAuctioned = lot.status === "AUCTIONED" || lot.status === "DISPATCHED";
