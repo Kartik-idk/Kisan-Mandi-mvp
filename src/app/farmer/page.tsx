@@ -489,7 +489,7 @@ function LotCard({ lot, setDisputeModal, t }: { lot: any, setDisputeModal: (lot:
             </div>
             <div className="flex gap-2">
               <button onClick={() => setDisputeModal(lot)} className="text-xs text-red-500 underline font-medium mr-1">{t.raiseDispute}</button>
-              <button className="text-sm bg-green-100 text-green-800 px-3 py-1.5 rounded-full font-bold">
+              <button onClick={() => setActiveTab("receipts")} className="text-sm bg-green-100 hover:bg-green-200 text-green-800 px-3 py-1.5 rounded-full font-bold transition-colors">
                 {t.viewReceipt}
               </button>
             </div>
