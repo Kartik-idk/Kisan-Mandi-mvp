@@ -35,7 +35,7 @@ export default function MerchantDashboard() {
     }
     if (showLoading) setLoading(true);
 
-    const userId = localStorage.getItem("mandi_user_id");
+    const userId = localStorage.getItem("mandi_user_merchant");
     if (!userId) {
       window.location.href = "/";
       return;
@@ -49,14 +49,9 @@ export default function MerchantDashboard() {
       .limit(1);
 
     if (userData && userData.length > 0) {
-      if (userData[0].role !== "MERCHANT") {
-        const routes: Record<string, string> = { FARMER: "/farmer", AGENT: "/agent", PALLEDAR: "/palledar", MANAGER: "/manager" };
-        window.location.href = routes[userData[0].role] || "/";
-        return;
-      }
       setMerchant(userData[0]);
     } else {
-      localStorage.removeItem("mandi_user_id");
+      localStorage.removeItem("mandi_user_merchant");
       window.location.href = "/";
       return;
     }
@@ -230,7 +225,7 @@ export default function MerchantDashboard() {
               </div>
               <button
                 onClick={() => {
-                  localStorage.removeItem("mandi_user_id");
+                  localStorage.removeItem("mandi_user_merchant");
                   window.location.href = "/";
                 }}
                 className="text-sm text-blue-200 hover:text-white underline transition-colors"

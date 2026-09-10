@@ -33,7 +33,7 @@ export default function AgentDashboard() {
   const fetchData = async (showLoading = true) => {
     if (showLoading) setLoading(true);
     
-    const userId = localStorage.getItem("mandi_user_id");
+    const userId = localStorage.getItem("mandi_user_agent");
     if (!userId) {
       window.location.href = "/";
       return;
@@ -47,13 +47,8 @@ export default function AgentDashboard() {
       setPalledars(usersData.filter(u => u.role === "PALLEDAR"));
       const agentUser = usersData.find(u => u.id === userId);
       if (!agentUser) {
-        localStorage.removeItem("mandi_user_id");
+        localStorage.removeItem("mandi_user_agent");
         window.location.href = "/";
-        return;
-      }
-      if (agentUser.role !== "AGENT") {
-        const routes: Record<string, string> = { FARMER: "/farmer", MERCHANT: "/merchant", PALLEDAR: "/palledar", MANAGER: "/manager" };
-        window.location.href = routes[agentUser.role] || "/";
         return;
       }
       setAgent(agentUser);

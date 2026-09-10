@@ -64,7 +64,7 @@ export default function AuthPage() {
           setStep("FORM");
         } else {
           log("Setting localStorage", data.id);
-          localStorage.setItem("mandi_user_id", data.id);
+          localStorage.setItem(`mandi_user_${data.role.toLowerCase()}`, data.id);
           log("Routing user", data.role);
           routeUser(data.role);
         }
@@ -86,7 +86,7 @@ export default function AuthPage() {
           }
           setStep("FORM");
         } else if (data) {
-          localStorage.setItem("mandi_user_id", data.id);
+          localStorage.setItem(`mandi_user_${data.role.toLowerCase()}`, data.id);
           routeUser(data.role);
         }
       }

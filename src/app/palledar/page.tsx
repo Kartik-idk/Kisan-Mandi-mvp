@@ -137,7 +137,7 @@ export default function PalledarDashboard() {
   const fetchData = async (showLoading = true) => {
     if (showLoading) setLoading(true);
 
-    const userId = localStorage.getItem("mandi_user_id");
+    const userId = localStorage.getItem("mandi_user_palledar");
     if (!userId) {
       window.location.href = "/";
       return;
@@ -151,14 +151,9 @@ export default function PalledarDashboard() {
       .limit(1);
 
     if (usersData && usersData.length > 0) {
-      if (usersData[0].role !== "PALLEDAR") {
-        const routes: Record<string, string> = { FARMER: "/farmer", AGENT: "/agent", MERCHANT: "/merchant", MANAGER: "/manager" };
-        window.location.href = routes[usersData[0].role] || "/";
-        return;
-      }
       setUser(usersData[0]);
     } else {
-      localStorage.removeItem("mandi_user_id");
+      localStorage.removeItem("mandi_user_palledar");
       window.location.href = "/";
       return;
     }
@@ -492,7 +487,7 @@ export default function PalledarDashboard() {
               <div className="p-4 border-t border-gray-400 text-gray-900 placeholder-gray-500">
                 <button
                   onClick={() => {
-                    localStorage.removeItem("mandi_user_id");
+                    localStorage.removeItem("mandi_user_palledar");
                     window.location.href = "/";
                   }}
                   className="w-full py-3 bg-red-100 border border-red-300 text-red-800 font-semibold rounded-xl  hover:bg-red-100 transition-colors flex items-center justify-center gap-2"

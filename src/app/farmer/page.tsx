@@ -92,7 +92,7 @@ export default function FarmerDashboard() {
   const fetchData = async (showLoading = true) => {
     if (showLoading) setLoading(true);
     
-    const userId = localStorage.getItem("mandi_user_id");
+    const userId = localStorage.getItem("mandi_user_farmer");
     if (!userId) {
       window.location.href = "/";
       return;
@@ -102,11 +102,6 @@ export default function FarmerDashboard() {
     
     if (usersData && usersData.length > 0) {
       const currentFarmer = usersData[0];
-      if (currentFarmer.role !== "FARMER") {
-        const routes: Record<string, string> = { AGENT: "/agent", MERCHANT: "/merchant", PALLEDAR: "/palledar", MANAGER: "/manager" };
-        window.location.href = routes[currentFarmer.role] || "/";
-        return;
-      }
       setFarmer(currentFarmer);
 
       // Get lots for this farmer
