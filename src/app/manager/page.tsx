@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
+import PriceHistory from "@/components/PriceHistory";
 import {
   Activity,
   BarChart3,
@@ -62,10 +63,11 @@ interface Dispute {
   lot: { crop_type: string; lot_number: string } | null;
 }
 
-type TabKey = "overview" | "transactions" | "disputes" | "infrastructure";
+type TabKey = "overview" | "transactions" | "disputes" | "infrastructure" | "market";
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: "overview", label: "Overview", icon: <Activity className="h-4 w-4" /> },
+  { key: "market", label: "Market Trends", icon: <TrendingUp className="h-4 w-4" /> },
   { key: "transactions", label: "Transaction Ledger", icon: <Scale className="h-4 w-4" /> },
   { key: "disputes", label: "Dispute Management", icon: <AlertTriangle className="h-4 w-4" /> },
   { key: "infrastructure", label: "Infrastructure", icon: <Building2 className="h-4 w-4" /> },
@@ -793,6 +795,19 @@ export default function ManagerDashboard() {
             )}
 
             {/* ════════════════════ TAB 4: INFRASTRUCTURE ═════════════════════ */}
+            {/* ── Market Trends Tab ────────────────────────────────────────── */}
+            {activeTab === "market" && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                  <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-indigo-600" />
+                    Market Price Analytics
+                  </h2>
+                  <PriceHistory lang="EN" />
+                </div>
+              </div>
+            )}
+
             {activeTab === "infrastructure" && (
               <div>
                 <div className="mb-6">

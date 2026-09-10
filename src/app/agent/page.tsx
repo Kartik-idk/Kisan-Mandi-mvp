@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, LayoutDashboard, Truck, CheckCircle2 } from "lucide-react";
+import { Plus, LayoutDashboard, Truck, CheckCircle2, TrendingUp } from "lucide-react";
+import PriceHistory from "@/components/PriceHistory";
 
 export default function AgentDashboard() {
   const [lots, setLots] = useState<any[]>([]);
@@ -623,6 +624,16 @@ export default function AgentDashboard() {
               </div>
             )}
           </div>
+        </div>
+
+
+        {/* Market Trends Section */}
+        <div className="lg:col-span-3 mt-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <TrendingUp className="h-6 w-6 text-indigo-600" />
+            Market Price Trends
+          </h2>
+          <PriceHistory />
         </div>
 
       </main>

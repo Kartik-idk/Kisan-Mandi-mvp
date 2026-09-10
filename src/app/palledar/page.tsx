@@ -13,6 +13,7 @@ import {
   Clock,
   PlayCircle,
   ArrowUpDown,
+  TrendingUp,
   Scale,
   Truck,
   IndianRupee,
@@ -20,6 +21,7 @@ import {
   Hash,
 } from "lucide-react";
 import { Toast } from "@/components/Toast";
+import PriceHistory from "@/components/PriceHistory";
 
 // --- Types ---
 interface WorkTask {
@@ -58,7 +60,7 @@ export default function PalledarDashboard() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"tasks" | "earnings" | "profile">("tasks");
+  const [activeTab, setActiveTab] = useState<"tasks" | "earnings" | "profile" | "market">("tasks");
   const [lang, setLang] = useState<"EN" | "HI">("EN");
 
   const t = {
@@ -81,6 +83,7 @@ export default function PalledarDashboard() {
       tasksDone: "Tasks Completed",
       signOut: "Sign Out",
       tabTasks: "Tasks",
+      tabMarket: "Market",
       tabEarnings: "Earnings",
       tabProfile: "Profile",
       // Task Types & Statuses
@@ -111,6 +114,7 @@ export default function PalledarDashboard() {
       tasksDone: "पूरे किए गए कार्य",
       signOut: "लॉग आउट करें",
       tabTasks: "काम",
+      tabMarket: "बाजार",
       tabEarnings: "कमाई",
       tabProfile: "प्रोफ़ाइल",
       // Task Types & Statuses
@@ -440,6 +444,15 @@ export default function PalledarDashboard() {
         )}
 
         {/* --- TAB: PROFILE --- */}
+        {/* --- TAB: MARKET --- */}
+        {activeTab === "market" && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t[lang].tabMarket}</h1>
+            <p className="text-gray-800 mb-6">Live mandi rates and trading history.</p>
+            <PriceHistory lang={lang} />
+          </div>
+        )}
+
         {activeTab === "profile" && (
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-6">{t[lang].profile}</h1>
@@ -521,6 +534,14 @@ export default function PalledarDashboard() {
           <Wallet className="h-6 w-6" />
           <span className="text-xs mt-1 font-medium">{t[lang].tabEarnings}</span>
         </button>
+        <button 
+          onClick={() => setActiveTab("market")}
+          className={`flex flex-col items-center transition-colors ${activeTab === "market" ? "text-emerald-800" : "text-gray-800 hover:text-emerald-800"}`}
+        >
+          <TrendingUp className="h-6 w-6" />
+          <span className="text-xs mt-1 font-medium">{t[lang].tabMarket}</span>
+        </button>
+
         <button
           onClick={() => setActiveTab("profile")}
           className={`flex flex-col items-center transition-colors ${

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Tractor, Package, CheckCircle2, AlertCircle, FileText, User, Phone, MapPin, X, Smartphone } from "lucide-react";
+import PriceHistory from "@/components/PriceHistory";
+import { Tractor, TrendingUp, Package, CheckCircle2, AlertCircle, FileText, User, Phone, MapPin, X, Smartphone } from "lucide-react";
 import { Toast } from "@/components/Toast";
 
 export default function FarmerDashboard() {
@@ -11,7 +12,7 @@ export default function FarmerDashboard() {
   const [farmer, setFarmer] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<"lots" | "receipts" | "profile">("lots");
+  const [activeTab, setActiveTab] = useState<"lots" | "receipts" | "market" | "profile">("lots");
   const [lang, setLang] = useState<"EN" | "HI">("EN");
   const [toast, setToast] = useState<{msg: string, type: "success"|"error"} | null>(null);
 
@@ -34,6 +35,7 @@ export default function FarmerDashboard() {
       profile: "My Profile",
       signOut: "Sign Out",
       tabLots: "My Lots",
+      tabMarket: "Market",
       tabReceipts: "Receipts",
       tabProfile: "Profile",
       // LotCard translations
@@ -63,6 +65,7 @@ export default function FarmerDashboard() {
       profile: "मेरी प्रोफ़ाइल",
       signOut: "लॉग आउट करें",
       tabLots: "मेरे लॉट",
+      tabMarket: "बाजार",
       tabReceipts: "रसीदें",
       tabProfile: "प्रोफ़ाइल",
       // LotCard translations
@@ -297,6 +300,15 @@ export default function FarmerDashboard() {
         )}
 
         {/* --- TAB: PROFILE --- */}
+        {/* --- TAB: MARKET --- */}
+        {activeTab === "market" && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t[lang].tabMarket}</h1>
+            <p className="text-gray-800 mb-6">Live mandi rates and trading history.</p>
+            <PriceHistory lang={lang} />
+          </div>
+        )}
+
         {activeTab === "profile" && (
           <div>
              <h1 className="text-2xl font-bold text-gray-900 mb-6">{t[lang].profile}</h1>
@@ -416,6 +428,13 @@ export default function FarmerDashboard() {
         >
           <FileText className="h-6 w-6" />
           <span className="text-xs mt-1 font-medium">{t[lang].tabReceipts}</span>
+        </button>
+        <button 
+          onClick={() => setActiveTab("market")}
+          className={`flex flex-col items-center transition-colors ${activeTab === "market" ? "text-green-800" : "text-gray-800 hover:text-green-800"}`}
+        >
+          <TrendingUp className="h-6 w-6" />
+          <span className="text-xs mt-1 font-medium">{t[lang].tabMarket}</span>
         </button>
         <button 
           onClick={() => setActiveTab("profile")}
