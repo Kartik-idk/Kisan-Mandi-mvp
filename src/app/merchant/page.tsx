@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import LotTimeline from "@/components/LotTimeline";
+import { formatLotId } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
 import { Store, ShoppingCart, TrendingUp, Truck, Package, CheckCircle2 } from "lucide-react";
 import { Toast } from "@/components/Toast";
@@ -111,17 +113,44 @@ export default function MerchantDashboard() {
   };
 
   const handlePlaceBid = async (lot: any) => {
-    const amountStr = window.prompt(`Enter your bid (price per quintal) for ${lot.crop_type}:`);
+    // 1. Fetch current highest bid for validation
+    const { data: currentBids } = await supabase
+      .from('bids')
+      .select('amount')
+      .eq('lot_id', lot.id)
+      .order('amount', { ascending: false })
+      .limit(1);
+    
+    const currentHighest = currentBids && currentBids.length > 0 ? currentBids[0].amount : 0;
+    
+    const amountStr = window.prompt(
+      `Enter your bid (price per quintal) for ${lot.crop_type}:\n(Current Highest Bid: ₹${currentHighest || 'None'})`
+    );
+    
     if (!amountStr) return;
     const amount = parseFloat(amountStr);
+    
     if (isNaN(amount) || amount <= 0) {
       setToast({ msg: "Invalid bid amount", type: "error" });
       return;
     }
     
+    // 2. Generic Validation: Must be strictly higher than current highest bid
+    if (amount <= currentHighest) {
+      setToast({ msg: `Bid must be higher than current highest bid (₹${currentHighest})`, type: "error" });
+      return;
+    }
+    
+    // 3. Ensure Lot is still available for bidding (status = WEIGHED)
+    const { data: checkLot } = await supabase.from('lots').select('status').eq('id', lot.id).single();
+    if (checkLot?.status !== 'WEIGHED') {
+      setToast({ msg: "Auction closed! Lot is no longer accepting bids.", type: "error" });
+      return;
+    }
+    
     setBiddedLots(prev => ({...prev, [lot.id]: true}));
     
-    // Insert into bids table (will fail silently if they didn't run the SQL yet)
+    // 4. Insert into bids table
     const { error } = await supabase.from('bids').insert({
       lot_id: lot.id,
       merchant_id: merchant.id,
@@ -130,16 +159,10 @@ export default function MerchantDashboard() {
     });
     
     if (error) {
-      console.warn("Bids table might not exist yet", error);
-      setToast({
-        msg: `Simulated Bid Placed! (Create 'bids' table for real bidding)`,
-        type: "success"
-      });
+      console.warn("Error placing bid:", error);
+      setToast({ msg: `Error placing bid`, type: "error" });
     } else {
-      setToast({
-        msg: `Bid of ₹${amount} placed successfully!`,
-        type: "success"
-      });
+      setToast({ msg: `Bid of ₹${amount} placed successfully!`, type: "success" });
     }
   };
 
@@ -288,7 +311,7 @@ export default function MerchantDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {lots.map((lot) => (
                   <div
-                    key={lot.id}
+                    key={formatLotId(lot.id)}
                     className="bg-white rounded-xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 overflow-hidden hover:shadow-md transition-shadow"
                   >
                     <div className="p-5">

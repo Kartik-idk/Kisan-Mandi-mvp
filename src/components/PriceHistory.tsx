@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { TrendingUp, Package } from "lucide-react";
+import { TrendingUp, Package, ShieldCheck } from "lucide-react";
+import { getMspForCrop } from "@/lib/constants";
 
 export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN" }) {
   const [priceData, setPriceData] = useState<any[]>([]);
@@ -29,13 +30,21 @@ export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN
         grouped[crop].prices.push(Number(tx.price_per_quintal));
       });
 
-      const summary = Object.values(grouped).map((g) => ({
-        crop_type: g.crop_type,
-        avg_price: (g.prices.reduce((a, b) => a + b, 0) / g.prices.length).toFixed(2),
-        min_price: Math.min(...g.prices).toFixed(2),
-        max_price: Math.max(...g.prices).toFixed(2),
-        total_trades: g.prices.length,
-      }));
+      const summary = Object.values(grouped).map((g) => {
+        const avg = g.prices.reduce((a, b) => a + b, 0) / g.prices.length;
+        const msp = getMspForCrop(g.crop_type);
+        const spread = msp ? avg - msp : null;
+
+        return {
+          crop_type: g.crop_type,
+          avg_price: avg.toFixed(2),
+          min_price: Math.min(...g.prices).toFixed(2),
+          max_price: Math.max(...g.prices).toFixed(2),
+          total_trades: g.prices.length,
+          msp: msp,
+          spread: spread !== null ? spread.toFixed(2) : null
+        };
+      });
 
       setPriceData(summary);
     }
@@ -46,47 +55,53 @@ export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN
 
   const t = {
     EN: {
-      title: "Market Price Trends",
-      desc: "Live average, minimum, and maximum trading prices across the Mandi.",
+      title: "Market Price Trends & MSP Reference",
+      desc: "Live average, minimum, and maximum trading prices with official Govt MSP benchmark.",
       noData: "No transaction data available yet.",
       crop: "Crop Type",
       avg: "Avg Price (₹/Qtl)",
-      min: "Min Price",
-      max: "Max Price",
+      msp: "Govt MSP",
+      spread: "MSP Spread",
+      min: "Min / Max",
       trades: "Trades",
-      spread: "Spread"
     },
     HI: {
-      title: "बाजार मूल्य प्रवृत्तियां",
-      desc: "मंडी में लाइव औसत, न्यूनतम और अधिकतम व्यापारिक कीमतें।",
+      title: "बाजार मूल्य प्रवृत्तियां और एमएसपी संदर्भ",
+      desc: "सरकारी एमएसपी बेंचमार्क के साथ लाइव औसत, न्यूनतम और अधिकतम व्यापारिक कीमतें।",
       noData: "अभी तक कोई लेनदेन डेटा उपलब्ध नहीं है।",
       crop: "फसल",
-      avg: "औसत मूल्य",
-      min: "न्यूनतम",
-      max: "अधिकतम",
+      avg: "औसत मूल्य (₹/क्विंटल)",
+      msp: "सरकारी एमएसपी",
+      spread: "एमएसपी अंतर",
+      min: "न्यूनतम / अधिकतम",
       trades: "व्यापार",
-      spread: "अंतर"
     },
     KN: {
-      title: "ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ಪ್ರವೃತ್ತಿಗಳು",
-      desc: "ಮಂಡಿಯಾದ್ಯಂತ ನೇರ ಸರಾಸರಿ, ಕನಿಷ್ಠ ಮತ್ತು ಗರಿಷ್ಠ ವ್ಯಾಪಾರ ಬೆಲೆಗಳು.",
+      title: "ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ಪ್ರವೃತ್ತಿಗಳು & ಎಂಎಸ್‌ಪಿ ಉಲ್ಲೇಖ",
+      desc: "ಸರ್ಕಾರಿ ಎಂಎಸ್‌ಪಿ ಮಾನದಂಡದೊಂದಿಗೆ ನೇರ ಸರಾಸರಿ, ಕನಿಷ್ಠ ಮತ್ತು ಗರಿಷ್ಠ ವ್ಯಾಪಾರ ಬೆಲೆಗಳು.",
       noData: "ಯಾವುದೇ ವಹಿವಾಟು ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ.",
       crop: "ಬೆಳೆ",
-      avg: "ಸರಾಸರಿ ಬೆಲೆ",
-      min: "ಕನಿಷ್ಠ",
-      max: "ಗರಿಷ್ಠ",
+      avg: "ಸರಾಸರಿ ಬೆಲೆ (₹/ಕ್ವಿಂಟಾಲ್)",
+      msp: "ಸರ್ಕಾರಿ ಎಂಎಸ್‌ಪಿ",
+      spread: "ಎಂಎಸ್‌ಪಿ ವ್ಯತ್ಯಾಸ",
+      min: "ಕನಿಷ್ಠ / ಗರಿಷ್ಠ",
       trades: "ವಹಿವಾಟು",
-      spread: "ವ್ಯತ್ಯಾಸ"
     }
   }[lang];
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center gap-2">
-        <TrendingUp className="h-5 w-5 text-indigo-600" />
-        <div>
-          <h3 className="font-bold text-gray-900">{t.title}</h3>
-          <p className="text-xs text-gray-800">{t.desc}</p>
+      <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between flex-wrap gap-2">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-indigo-600" />
+          <div>
+            <h3 className="font-bold text-gray-900">{t.title}</h3>
+            <p className="text-xs text-gray-700">{t.desc}</p>
+          </div>
+        </div>
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 border border-green-200 rounded-lg text-xs font-semibold text-green-800">
+          <ShieldCheck className="h-4 w-4 text-green-600" />
+          <span>Govt MSP Context Active</span>
         </div>
       </div>
 
@@ -99,28 +114,53 @@ export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-bold text-gray-900 uppercase">{t.crop}</th>
-                <th className="px-4 py-2 text-right text-xs font-bold text-gray-900 uppercase">{t.avg}</th>
-                <th className="px-4 py-2 text-right text-xs font-bold text-gray-900 uppercase">{t.min}</th>
-                <th className="px-4 py-2 text-right text-xs font-bold text-gray-900 uppercase">{t.max}</th>
-                <th className="px-4 py-2 text-right text-xs font-bold text-gray-900 uppercase">{t.trades}</th>
+                <th className="px-4 py-2.5 text-left text-xs font-bold text-gray-900 uppercase">{t.crop}</th>
+                <th className="px-4 py-2.5 text-right text-xs font-bold text-gray-900 uppercase">{t.avg}</th>
+                <th className="px-4 py-2.5 text-right text-xs font-bold text-gray-900 uppercase">{t.msp}</th>
+                <th className="px-4 py-2.5 text-right text-xs font-bold text-gray-900 uppercase">{t.spread}</th>
+                <th className="px-4 py-2.5 text-right text-xs font-bold text-gray-900 uppercase">{t.min}</th>
+                <th className="px-4 py-2.5 text-right text-xs font-bold text-gray-900 uppercase">{t.trades}</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {priceData.map((row) => (
-                <tr key={row.crop_type} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Package className="h-4 w-4 text-green-600" />
-                      <span className="text-sm font-bold text-gray-900">{row.crop_type}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-right font-bold text-blue-700">₹{row.avg_price}</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium text-red-800">₹{row.min_price}</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium text-green-800">₹{row.max_price}</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium text-gray-800">{row.total_trades}</td>
-                </tr>
-              ))}
+              {priceData.map((row) => {
+                const spreadNum = Number(row.spread);
+                const isAboveMsp = spreadNum >= 0;
+
+                return (
+                  <tr key={row.crop_type} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <Package className="h-4 w-4 text-green-600" />
+                        <span className="text-sm font-bold text-gray-900">{row.crop_type}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-right font-bold text-blue-700">₹{row.avg_price}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-semibold text-slate-700">
+                      {row.msp ? `₹${row.msp}` : "—"}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-right text-xs">
+                      {row.spread !== null ? (
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded-full font-bold ${
+                            isAboveMsp
+                              ? "bg-green-100 text-green-800 border border-green-200"
+                              : "bg-red-100 text-red-800 border border-red-200"
+                          }`}
+                        >
+                          {isAboveMsp ? `+₹${row.spread}` : `-₹${Math.abs(spreadNum)}`} vs MSP
+                        </span>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-right text-xs text-gray-700">
+                      <span className="text-red-700 font-medium">₹{row.min_price}</span> / <span className="text-green-700 font-medium">₹{row.max_price}</span>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium text-gray-800">{row.total_trades}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

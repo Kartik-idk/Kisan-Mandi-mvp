@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import LotTimeline from "@/components/LotTimeline";
+import { formatLotId } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
 import { Plus, LayoutDashboard, Truck, CheckCircle2, TrendingUp } from "lucide-react";
 import PriceHistory from "@/components/PriceHistory";
@@ -507,7 +509,7 @@ export default function AgentDashboard() {
                     {lots.map((lot) => (
                       <tr key={lot.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{lot.users?.name || "Unknown"}</div>
+                          <div className="text-sm font-medium text-gray-900">{lot.users?.name || "Unknown"}</div><div className="text-xs text-gray-500 font-mono mt-1">{formatLotId(lot.id)}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">{lot.crop_type} ({lot.weight_kg}kg)</div>

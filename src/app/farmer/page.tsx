@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import LotTimeline from "@/components/LotTimeline";
+import { formatLotId } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
 import PriceHistory from "@/components/PriceHistory";
 import { Tractor, TrendingUp, Package, CheckCircle2, AlertCircle, FileText, User, Phone, MapPin, X, Smartphone } from "lucide-react";
@@ -488,7 +490,7 @@ function LotCard({ lot, setDisputeModal, setActiveTab, t }: { lot: any, setDispu
     <div className="bg-white rounded-2xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 overflow-hidden">
       <div className="p-4 border-b border-gray-200 flex justify-between items-start">
         <div>
-          <h3 className="font-bold text-gray-900 text-lg">{lot.crop_type}</h3>
+          <div className="flex items-center gap-2"><h3 className="font-bold text-gray-900 text-lg">{lot.crop_type}</h3><span className="text-xs font-mono bg-gray-200 text-gray-700 px-2 py-0.5 rounded">{formatLotId(lot.id)}</span></div>
           <p className="text-sm text-gray-700 mt-1">{t.agent}: {lot.users?.name || "Unknown"}</p>
         </div>
         <div className="text-right">
@@ -498,18 +500,7 @@ function LotCard({ lot, setDisputeModal, setActiveTab, t }: { lot: any, setDispu
       </div>
       
       <div className="bg-gray-50 p-4">
-        {/* Progress Bar UI */}
-        <div className="relative pt-2">
-          <div className="flex justify-between mb-2">
-            <span className={`text-sm font-semibold uppercase ${isArrived || isWeighed || isAuctioned ? "text-green-800" : "text-gray-800"}`}>{t.arrived}</span>
-            <span className={`text-sm font-semibold uppercase ${isWeighed || isAuctioned ? "text-green-800" : "text-gray-800"}`}>{t.weighed}</span>
-            <span className={`text-sm font-semibold uppercase ${isAuctioned ? "text-green-800" : "text-gray-800"}`}>{t.sold}</span>
-          </div>
-          
-          <div className="overflow-hidden h-2 mb-4 text-sm flex rounded-full bg-gray-200">
-            <div style={{ width: isAuctioned ? '100%' : isWeighed ? '50%' : '15%' }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-100 border border-green-3000 transition-all duration-500"></div>
-          </div>
-        </div>
+        <LotTimeline status={lot.status} dispatchStatus={lot.dispatch_status} />
         
         {isAuctioned && (
           <div className="mt-4 pt-4 border-t border-dashed border-gray-400 text-gray-900 placeholder-gray-500 flex justify-between items-center">

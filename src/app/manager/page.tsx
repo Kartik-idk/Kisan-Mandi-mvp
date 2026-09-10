@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import PriceHistory from "@/components/PriceHistory";
+import LotTimeline from "@/components/LotTimeline";
+import { formatLotId } from "@/lib/constants";
 import {
   Activity,
   BarChart3,
@@ -63,10 +65,11 @@ interface Dispute {
   lot: { crop_type: string; lot_number: string } | null;
 }
 
-type TabKey = "overview" | "transactions" | "disputes" | "infrastructure" | "market";
+type TabKey = "overview" | "traceability" | "market" | "transactions" | "disputes" | "infrastructure";
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: "overview", label: "Overview", icon: <Activity className="h-4 w-4" /> },
+  { key: "traceability", label: "Lot Traceability", icon: <PackageSearch className="h-4 w-4" /> },
   { key: "market", label: "Market Trends", icon: <TrendingUp className="h-4 w-4" /> },
   { key: "transactions", label: "Transaction Ledger", icon: <Scale className="h-4 w-4" /> },
   { key: "disputes", label: "Dispute Management", icon: <AlertTriangle className="h-4 w-4" /> },
@@ -74,6 +77,115 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
 ];
 
 // ─── Component ───────────────────────────────────────────────────────────────
+
+
+function TraceabilityInspector() {
+  const [lots, setLots] = useState<any[]>([]);
+  const [selectedLotId, setSelectedLotId] = useState<string>("");
+  const [lotData, setLotData] = useState<any>(null);
+  
+  useEffect(() => {
+    supabase.from("lots").select("id, crop_type, weight_kg, status, created_at, users!lots_farmer_id_fkey(name)").order("created_at", { ascending: false }).limit(50)
+      .then(({data}) => {
+        if (data) {
+          setLots(data);
+          if (data.length > 0) setSelectedLotId(data[0].id);
+        }
+      });
+  }, []);
+  
+  useEffect(() => {
+    if (!selectedLotId) return;
+    
+    async function fetchFullLot() {
+      const { data: lot } = await supabase.from("lots").select("*, farmer:users!lots_farmer_id_fkey(name), agent:users!lots_agent_id_fkey(name)").eq("id", selectedLotId).single();
+      const { data: tx } = await supabase.from("transactions").select("*, merchant:users!transactions_merchant_id_fkey(name)").eq("lot_id", selectedLotId).single();
+      const { data: tasks } = await supabase.from("work_tasks").select("*, palledar:users!work_tasks_palledar_id_fkey(name)").eq("lot_id", selectedLotId);
+      
+      setLotData({ lot, tx, tasks: tasks || [] });
+    }
+    fetchFullLot();
+  }, [selectedLotId]);
+  
+  if (!lotData) return <div className="p-8 text-center">Loading Traceability...</div>;
+  const { lot, tx, tasks } = lotData;
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <label className="block text-sm font-semibold text-slate-700 mb-2">Select Lot from Recent Records</label>
+        <select 
+          className="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500"
+          value={selectedLotId}
+          onChange={(e) => setSelectedLotId(e.target.value)}
+        >
+          {lots.map(l => (
+            <option key={l.id} value={l.id}>{formatLotId(l.id)} - {l.crop_type} ({l.weight_kg}kg) - {l.users?.name} - {l.status}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div className="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
+          <div>
+            <div className="text-sm text-slate-500 mb-1">{formatLotId(lot.id)}</div>
+            <h2 className="text-2xl font-bold text-slate-900">{lot.crop_type} <span className="text-lg font-normal text-slate-600">({lot.weight_kg} kg)</span></h2>
+            <div className="text-sm font-medium text-slate-700 mt-2">Grade: {lot.quality_grade || 'N/A'}</div>
+          </div>
+          <div className="text-right">
+            <span className="inline-block bg-blue-50 text-blue-800 border border-blue-200 px-3 py-1 rounded-full text-sm font-semibold">
+              Current State: {lot.status}
+            </span>
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Lifecycle Timeline</h3>
+          <LotTimeline status={lot.status} dispatchStatus={lot.dispatch_status} />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
+            <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Source (Farmer)</div>
+            <div className="font-semibold text-slate-900">{lot.farmer?.name || 'Unknown'}</div>
+          </div>
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
+            <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Mandi Agent</div>
+            <div className="font-semibold text-slate-900">{lot.agent?.name || 'Unassigned'}</div>
+          </div>
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
+            <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Buyer (Merchant)</div>
+            <div className="font-semibold text-slate-900">{tx?.merchant?.name || 'Pending Auction'}</div>
+          </div>
+          <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
+            <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Settlement</div>
+            <div className="font-semibold text-slate-900">{tx ? `₹${tx.total_amount}` : 'N/A'}</div>
+            <div className="text-xs mt-1 text-slate-600">{tx?.payment_status || ''}</div>
+          </div>
+        </div>
+
+        {tasks.length > 0 && (
+          <div className="mt-6 pt-6 border-t border-slate-100">
+            <h3 className="text-sm font-bold text-slate-800 mb-3">Associated Palledar Labor</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {tasks.map((t: any) => (
+                <div key={t.id} className="flex justify-between items-center p-3 border border-slate-200 rounded-lg">
+                  <div>
+                    <div className="font-semibold text-slate-800 text-sm">{t.task_type}</div>
+                    <div className="text-xs text-slate-500">{t.palledar?.name}</div>
+                  </div>
+                  <div className="text-right text-sm">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${t.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{t.status}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function ManagerDashboard() {
   const [activeTab, setActiveTab] = useState<TabKey>("overview");

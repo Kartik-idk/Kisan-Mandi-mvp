@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import LotTimeline from "@/components/LotTimeline";
+import { formatLotId } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
 import {
   ClipboardList,
@@ -435,7 +437,7 @@ export default function PalledarDashboard() {
                             {TASK_TYPE_CONFIG[task.task_type]?.label || task.task_type}
                           </p>
                           <p className="text-sm text-gray-700 mt-0.5">
-                            {task.lots?.crop_type} • {task.lots?.weight_kg}kg
+                            {task.lots?.crop_type} • {task.lots?.weight_kg}kg<br/><span className="text-xs font-mono text-gray-500 mt-1 block">{formatLotId(task.lot_id)}</span>
                           </p>
                           <p className="text-xs text-gray-800 mt-1">
                             {task.completed_at
