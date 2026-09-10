@@ -1144,6 +1144,42 @@ export default function ManagerDashboard() {
           </>
         )}
       </main>
+
+      <Modal 
+        isOpen={!!resolveModal} 
+        onClose={() => setResolveModal(null)} 
+        title="Resolve Dispute"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Resolution Notes</label>
+            <textarea
+              rows={3}
+              placeholder="Explain how this was resolved..."
+              className="w-full border-slate-300 rounded-lg shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
+              value={resolutionText}
+              onChange={(e) => setResolutionText(e.target.value)}
+              autoFocus
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4 border-t border-slate-100">
+            <button 
+              onClick={() => setResolveModal(null)}
+              className="flex-1 bg-white border-slate-300 text-slate-700 py-2.5 rounded-lg hover:bg-slate-50 transition-colors font-medium border"
+            >
+              Cancel
+            </button>
+            <button 
+              onClick={submitResolve}
+              disabled={!resolutionText.trim()}
+              className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
+            >
+              Resolve Dispute
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
