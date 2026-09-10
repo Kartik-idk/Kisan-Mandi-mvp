@@ -106,6 +106,23 @@ export default function ManagerDashboard() {
 
   // ─── Data Fetching ───────────────────────────────────────────────────────
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      const userId = localStorage.getItem("mandi_user_manager");
+      if (!userId) {
+        window.location.href = "/";
+        return;
+      }
+      const { data } = await supabase.from("users").select("role").eq("id", userId).limit(1);
+      if (!data || data.length === 0 || data[0].role !== "MANAGER") {
+        localStorage.removeItem("mandi_user_manager");
+        window.location.href = "/";
+      }
+    };
+    checkAuth();
+  }, []);
+
+
   const fetchOverviewData = useCallback(async (showLoading = true) => {
     if (showLoading) setLoading(true);
 

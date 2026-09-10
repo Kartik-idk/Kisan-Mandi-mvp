@@ -108,9 +108,6 @@ export default function AuthPage() {
     else if (userRole === "MANAGER") router.push("/manager");
   };
 
-  const loginAsManager = () => {
-    router.push("/manager");
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -280,14 +277,18 @@ export default function AuthPage() {
                 </button>
               </div>
               
-              <div className="mt-8 text-center">
-                <button 
-                  onClick={loginAsManager}
-                  className="text-sm text-gray-800 hover:text-gray-800 underline"
-                >
-                  Quick Access: Mandi Manager Dashboard
-                </button>
+              <div className="mt-8 border border-green-200 bg-green-50 p-4 rounded-lg">
+                <h3 className="text-sm font-bold text-green-900 mb-2 text-center">Hackathon Demo Accounts</h3>
+                <div className="grid grid-cols-2 gap-2 text-xs text-green-800">
+                  <button onClick={() => { setPhone("9876543211"); setIsLogin(true); setStep("FORM"); }} className="underline text-left">Rajesh (Farmer)</button>
+                  <button onClick={() => { setPhone("9876543212"); setIsLogin(true); setStep("FORM"); }} className="underline text-left">ITC (Merchant)</button>
+                  <button onClick={() => { setPhone("9876543213"); setIsLogin(true); setStep("FORM"); }} className="underline text-left">Suresh (Agent)</button>
+                  <button onClick={() => { setPhone("9876543214"); setIsLogin(true); setStep("FORM"); }} className="underline text-left">Bhim (Palledar)</button>
+                  <button onClick={() => { setPhone("9876543215"); setIsLogin(true); setStep("FORM"); }} className="underline text-left col-span-2 text-center font-bold">Admin Manager (9876543215)</button>
+                </div>
+                <p className="text-xs text-green-800 mt-3 text-center italic">Password / OTP: Any 4 digits (e.g. 1234)</p>
               </div>
+
             </div>
           )}
         </div>
