@@ -151,6 +151,11 @@ export default function PalledarDashboard() {
       .limit(1);
 
     if (usersData && usersData.length > 0) {
+      if (usersData[0].role !== "PALLEDAR") {
+        const routes: Record<string, string> = { FARMER: "/farmer", AGENT: "/agent", MERCHANT: "/merchant", MANAGER: "/manager" };
+        window.location.href = routes[usersData[0].role] || "/";
+        return;
+      }
       setUser(usersData[0]);
     } else {
       localStorage.removeItem("mandi_user_id");

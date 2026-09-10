@@ -102,6 +102,11 @@ export default function FarmerDashboard() {
     
     if (usersData && usersData.length > 0) {
       const currentFarmer = usersData[0];
+      if (currentFarmer.role !== "FARMER") {
+        const routes: Record<string, string> = { AGENT: "/agent", MERCHANT: "/merchant", PALLEDAR: "/palledar", MANAGER: "/manager" };
+        window.location.href = routes[currentFarmer.role] || "/";
+        return;
+      }
       setFarmer(currentFarmer);
 
       // Get lots for this farmer

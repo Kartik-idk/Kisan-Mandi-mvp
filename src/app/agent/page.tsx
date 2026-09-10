@@ -51,6 +51,11 @@ export default function AgentDashboard() {
         window.location.href = "/";
         return;
       }
+      if (agentUser.role !== "AGENT") {
+        const routes: Record<string, string> = { FARMER: "/farmer", MERCHANT: "/merchant", PALLEDAR: "/palledar", MANAGER: "/manager" };
+        window.location.href = routes[agentUser.role] || "/";
+        return;
+      }
       setAgent(agentUser);
     }
 

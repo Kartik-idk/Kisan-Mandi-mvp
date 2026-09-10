@@ -49,6 +49,11 @@ export default function MerchantDashboard() {
       .limit(1);
 
     if (userData && userData.length > 0) {
+      if (userData[0].role !== "MERCHANT") {
+        const routes: Record<string, string> = { FARMER: "/farmer", AGENT: "/agent", PALLEDAR: "/palledar", MANAGER: "/manager" };
+        window.location.href = routes[userData[0].role] || "/";
+        return;
+      }
       setMerchant(userData[0]);
     } else {
       localStorage.removeItem("mandi_user_id");
