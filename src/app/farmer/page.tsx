@@ -194,10 +194,10 @@ export default function FarmerDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 space-y-4 pt-20">
-        <div className="h-24 bg-gray-200 rounded-xl animate-pulse"></div>
-        <div className="h-48 bg-gray-200 rounded-xl animate-pulse"></div>
-        <div className="h-48 bg-gray-200 rounded-xl animate-pulse"></div>
+      <div className="min-h-screen bg-slate-50 p-4 space-y-4 pt-20">
+        <div className="h-24 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-48 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-48 bg-slate-200 rounded-xl animate-pulse"></div>
       </div>
     );
   }
@@ -207,7 +207,7 @@ export default function FarmerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 flex flex-col">
+    <div className="min-h-screen bg-slate-50 pb-20 flex flex-col">
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
       
       {/* Mobile-style Header */}
@@ -239,21 +239,21 @@ export default function FarmerDashboard() {
           <>
             <div className="mb-6 flex justify-between items-end">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{t[lang].myLots}</h1>
-                <p className="text-gray-700 text-sm">{t[lang].lotsDesc}</p>
+                <h1 className="text-2xl font-bold text-slate-900">{t[lang].myLots}</h1>
+                <p className="text-slate-700 text-sm">{t[lang].lotsDesc}</p>
               </div>
               <div className="bg-green-100 text-green-800 p-2 rounded-lg text-center shadow-sm">
-                <div className="text-sm font-bold uppercase tracking-wide">{t[lang].total}</div>
-                <div className="text-xl font-black">{lots.length}</div>
+                <div className="text-xs font-semibold uppercase tracking-wide">{t[lang].total}</div>
+                <div className="text-xl font-bold">{lots.length}</div>
               </div>
             </div>
 
             <div className="space-y-4">
               {lots.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
-                  <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-700">{t[lang].noLotsTitle}</p>
-                  <p className="text-sm text-gray-800 mt-1">{t[lang].noLotsDesc}</p>
+                <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-slate-200">
+                  <Package className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                  <p className="text-slate-700">{t[lang].noLotsTitle}</p>
+                  <p className="text-sm text-slate-800 mt-1">{t[lang].noLotsDesc}</p>
                 </div>
               ) : (
                 lots.map((lot) => <LotCard key={lot.id} lot={lot} setDisputeModal={setDisputeModal} setActiveTab={setActiveTab} t={t[lang]} />)
@@ -265,21 +265,21 @@ export default function FarmerDashboard() {
         {/* --- TAB: RECEIPTS --- */}
         {activeTab === "receipts" && (
           <div>
-             <h1 className="text-2xl font-bold text-gray-900 mb-2">{t[lang].receiptsTitle}</h1>
-             <p className="text-gray-700 text-sm mb-6">{t[lang].receiptsDesc}</p>
+             <h1 className="text-2xl font-bold text-slate-900 mb-2">{t[lang].receiptsTitle}</h1>
+             <p className="text-slate-700 text-sm mb-6">{t[lang].receiptsDesc}</p>
              
              <div className="space-y-4">
                 {transactions.length === 0 ? (
-                  <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
-                    <FileText className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-700 font-medium">{t[lang].noReceiptsTitle}</p>
-                    <p className="text-sm text-gray-800 mt-2 px-4">
+                  <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-slate-200">
+                    <FileText className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                    <p className="text-slate-700 font-medium">{t[lang].noReceiptsTitle}</p>
+                    <p className="text-sm text-slate-800 mt-2 px-4">
                       {t[lang].noReceiptsDesc}
                     </p>
                   </div>
                 ) : (
                   transactions.map(tx => (
-                    <div key={tx.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div key={tx.id} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                       <div className="bg-green-600 p-4 text-white flex justify-between items-center">
                         <div className="flex items-center gap-2">
                           <CheckCircle2 className="h-5 w-5" />
@@ -294,34 +294,34 @@ export default function FarmerDashboard() {
                       </div>
                       
                       <div className="p-4 space-y-3">
-                        <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                        <div className="flex justify-between items-center pb-3 border-b border-slate-200">
                           <div>
-                            <p className="text-sm text-gray-700">Crop Details</p>
-                            <p className="font-bold text-gray-900">{tx.lots?.crop_type} - {tx.lots?.weight_kg}kg</p>
+                            <p className="text-sm text-slate-700">Crop Details</p>
+                            <p className="font-bold text-slate-900">{tx.lots?.crop_type} - {tx.lots?.weight_kg}kg</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm text-gray-700">Rate (per Quintal)</p>
-                            <p className="font-bold text-gray-900">₹{tx.price_per_quintal}</p>
+                            <p className="text-sm text-slate-700">Rate (per Quintal)</p>
+                            <p className="font-bold text-slate-900">₹{tx.price_per_quintal}</p>
                           </div>
                         </div>
 
                         <div className="flex justify-between items-center text-sm">
-                          <span className="text-gray-800">Total Valuation:</span>
-                          <span className="font-medium text-gray-900">₹{tx.total_amount}</span>
+                          <span className="text-slate-800">Total Valuation:</span>
+                          <span className="font-medium text-slate-900">₹{tx.total_amount}</span>
                         </div>
                         
-                        <div className="flex justify-between items-center text-sm text-red-500 border-b border-gray-200 pb-3">
+                        <div className="flex justify-between items-center text-sm text-red-500 border-b border-slate-200 pb-3">
                           <span>Deductions (Fees/Labour):</span>
                           <span>- ₹{tx.deductions}</span>
                         </div>
 
                         <div className="flex justify-between items-center pt-1">
-                          <span className="font-bold text-gray-700">Net Payable:</span>
-                          <span className="font-black text-xl text-green-800">₹{tx.net_payable_to_farmer}</span>
+                          <span className="font-bold text-slate-700">Net Payable:</span>
+                          <span className="font-bold text-xl text-green-800">₹{tx.net_payable_to_farmer}</span>
                         </div>
                         
-                        <div className="mt-4 pt-3 border-t border-dashed border-gray-200">
-                          <p className="text-sm text-center text-gray-800">Arhtiya: {tx.lots?.users?.name}</p>
+                        <div className="mt-4 pt-3 border-t border-dashed border-slate-200">
+                          <p className="text-sm text-center text-slate-800">Arhtiya: {tx.lots?.users?.name}</p>
                         </div>
                       </div>
                     </div>
@@ -335,17 +335,17 @@ export default function FarmerDashboard() {
         {/* --- TAB: MARKET --- */}
         {activeTab === "market" && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t[lang].tabMarket}</h1>
-            <p className="text-gray-800 mb-6">Live mandi rates and trading history.</p>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">{t[lang].tabMarket}</h1>
+            <p className="text-slate-800 mb-6">Live mandi rates and trading history.</p>
             <PriceHistory lang={lang} />
           </div>
         )}
 
         {activeTab === "profile" && (
           <div>
-             <h1 className="text-2xl font-bold text-gray-900 mb-6">{t[lang].profile}</h1>
+             <h1 className="text-2xl font-bold text-slate-900 mb-6">{t[lang].profile}</h1>
              
-             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="bg-green-600 p-6 text-center text-white">
                   <div className="w-20 h-20 bg-white rounded-full mx-auto mb-3 flex items-center justify-center shadow-md">
                     <User className="h-10 w-10 text-green-800" />
@@ -355,24 +355,24 @@ export default function FarmerDashboard() {
                 </div>
                 
                 <div className="p-4 space-y-4">
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                    <Phone className="h-5 w-5 text-gray-800" />
+                  <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                    <Phone className="h-5 w-5 text-slate-800" />
                     <div>
-                      <p className="text-xs text-gray-700 uppercase font-bold tracking-wider">Phone Number</p>
-                      <p className="text-gray-900 font-medium">{farmer.phone_number}</p>
+                      <p className="text-xs text-slate-700 uppercase font-bold tracking-wider">Phone Number</p>
+                      <p className="text-slate-900 font-medium">{farmer.phone_number}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                    <MapPin className="h-5 w-5 text-gray-800" />
+                  <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                    <MapPin className="h-5 w-5 text-slate-800" />
                     <div>
-                      <p className="text-xs text-gray-700 uppercase font-bold tracking-wider">Mandi Location</p>
-                      <p className="text-gray-900 font-medium">Main APMC Yard, Block A</p>
+                      <p className="text-xs text-slate-700 uppercase font-bold tracking-wider">Mandi Location</p>
+                      <p className="text-slate-900 font-medium">Main APMC Yard, Block A</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className="p-4 border-t border-gray-200">
+                <div className="p-4 border-t border-slate-200">
                   <button 
                     onClick={() => window.location.href = "/"}
                     className="w-full py-3 bg-red-100 border border-red-300 text-red-800 font-semibold rounded-lg hover:bg-red-100 transition-colors"
@@ -396,12 +396,12 @@ export default function FarmerDashboard() {
             </div>
             <form onSubmit={submitDispute} className="p-5 space-y-4">
               <div>
-                <p className="text-sm text-gray-700 mb-2">
-                  Disputing Lot: <strong className="text-gray-900">{disputeModal.crop_type} ({disputeModal.weight_kg}kg)</strong>
+                <p className="text-sm text-slate-700 mb-2">
+                  Disputing Lot: <strong className="text-slate-900">{disputeModal.crop_type} ({disputeModal.weight_kg}kg)</strong>
                 </p>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Issue Type</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Issue Type</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-xl shadow-sm p-3 border focus:ring-red-500 focus:border-red-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-xl shadow-sm p-3 border focus:ring-red-500 focus:border-red-500"
                   value={disputeType}
                   onChange={(e) => setDisputeType(e.target.value)}
                 >
@@ -413,12 +413,12 @@ export default function FarmerDashboard() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
                 <textarea 
                   required
                   rows={3}
                   placeholder="Explain the issue..."
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-xl shadow-sm p-3 border focus:ring-red-500 focus:border-red-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-xl shadow-sm p-3 border focus:ring-red-500 focus:border-red-500"
                   value={disputeDescription}
                   onChange={(e) => setDisputeDescription(e.target.value)}
                 />
@@ -428,14 +428,14 @@ export default function FarmerDashboard() {
                 <button 
                   type="button" 
                   onClick={() => setDisputeModal(null)}
-                  className="flex-1 bg-white border border-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition font-medium"
+                  className="flex-1 bg-white border border-slate-200 text-slate-700 py-3 rounded-lg hover:bg-slate-50 transition font-medium"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
                   disabled={formLoading}
-                  className="flex-1 bg-red-600 text-white py-3 rounded-lg-lg-xl hover:bg-red-700 transition font-medium disabled:opacity-50"
+                  className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition font-medium disabled:opacity-50"
                 >
                   {formLoading ? "Submitting..." : "Submit Dispute"}
                 </button>
@@ -449,28 +449,28 @@ export default function FarmerDashboard() {
       <div className="fixed bottom-0 w-full bg-white border-t flex justify-around p-3 pb-safe shadow-[0_-5px_10px_-5px_rgba(0,0,0,0.05)] z-50">
         <button 
           onClick={() => setActiveTab("lots")}
-          className={`flex flex-col items-center transition-colors ${activeTab === "lots" ? "text-green-800" : "text-gray-800 hover:text-green-800"}`}
+          className={`flex flex-col items-center transition-colors ${activeTab === "lots" ? "text-green-800" : "text-slate-800 hover:text-green-800"}`}
         >
           <Tractor className="h-6 w-6" />
           <span className="text-xs mt-1 font-medium">{t[lang].tabLots}</span>
         </button>
         <button 
           onClick={() => setActiveTab("receipts")}
-          className={`flex flex-col items-center transition-colors ${activeTab === "receipts" ? "text-green-800" : "text-gray-800 hover:text-green-800"}`}
+          className={`flex flex-col items-center transition-colors ${activeTab === "receipts" ? "text-green-800" : "text-slate-800 hover:text-green-800"}`}
         >
           <FileText className="h-6 w-6" />
           <span className="text-xs mt-1 font-medium">{t[lang].tabReceipts}</span>
         </button>
         <button 
           onClick={() => setActiveTab("market")}
-          className={`flex flex-col items-center transition-colors ${activeTab === "market" ? "text-green-800" : "text-gray-800 hover:text-green-800"}`}
+          className={`flex flex-col items-center transition-colors ${activeTab === "market" ? "text-green-800" : "text-slate-800 hover:text-green-800"}`}
         >
           <TrendingUp className="h-6 w-6" />
           <span className="text-xs mt-1 font-medium">{t[lang].tabMarket}</span>
         </button>
         <button 
           onClick={() => setActiveTab("profile")}
-          className={`flex flex-col items-center transition-colors ${activeTab === "profile" ? "text-green-800" : "text-gray-800 hover:text-green-800"}`}
+          className={`flex flex-col items-center transition-colors ${activeTab === "profile" ? "text-green-800" : "text-slate-800 hover:text-green-800"}`}
         >
           <Smartphone className="h-6 w-6" />
           <span className="text-xs mt-1 font-medium">{t[lang].tabProfile}</span>
@@ -487,23 +487,23 @@ function LotCard({ lot, setDisputeModal, setActiveTab, t }: { lot: any, setDispu
   const isAuctioned = lot.status === "AUCTIONED" || lot.status === "DISPATCHED";
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="p-4 border-b border-gray-200 flex justify-between items-start">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="p-4 border-b border-slate-200 flex justify-between items-start">
         <div>
-          <div className="flex items-center gap-2"><h3 className="font-bold text-gray-900 text-lg">{lot.crop_type}</h3><span className="text-xs font-mono bg-gray-200 text-gray-700 px-2 py-0.5 rounded">{formatLotId(lot.id)}</span></div>
-          <p className="text-sm text-gray-700 mt-1">{t.agent}: {lot.users?.name || "Unknown"}</p>
+          <div className="flex items-center gap-2"><h3 className="text-lg font-semibold text-slate-900">{lot.crop_type}</h3><span className="text-xs font-mono bg-slate-200 text-slate-700 px-2 py-0.5 rounded">{formatLotId(lot.id)}</span></div>
+          <p className="text-sm text-slate-700 mt-1">{t.agent}: {lot.users?.name || "Unknown"}</p>
         </div>
         <div className="text-right">
-          <div className="text-lg font-black text-indigo-800">{lot.weight_kg} <span className="text-sm text-gray-700 font-normal">kg</span></div>
-          <div className="text-sm font-medium text-gray-800 uppercase tracking-wide">{t.grade} {lot.quality_grade}</div>
+          <div className="text-xl font-bold text-indigo-800">{lot.weight_kg} <span className="text-sm text-slate-700 font-normal">kg</span></div>
+          <div className="text-sm font-medium text-slate-800 uppercase tracking-wide">{t.grade} {lot.quality_grade}</div>
         </div>
       </div>
       
-      <div className="bg-gray-50 p-4">
+      <div className="bg-slate-50 p-4">
         <LotTimeline status={lot.status} dispatchStatus={lot.dispatch_status} />
         
         {isAuctioned && (
-          <div className="mt-4 pt-4 border-t border-dashed border-gray-200 flex justify-between items-center">
+          <div className="mt-4 pt-4 border-t border-dashed border-slate-200 flex justify-between items-center">
             <div className="flex items-center text-green-800 gap-1.5">
               <CheckCircle2 className="h-4 w-4" />
               <span className="text-sm font-medium">{t.receiptReady}</span>

@@ -128,7 +128,7 @@ function SmartMarketInsight() {
   return (
     <div className="bg-slate-900 rounded-xl shadow-lg border border-slate-700 p-6 mb-8 text-white relative overflow-hidden">
       <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-      <h3 className="text-sm font-bold tracking-wider text-indigo-400 uppercase mb-4 flex items-center gap-2">
+      <h3 className="text-xs font-semibold tracking-wider text-indigo-400 uppercase mb-4 flex items-center gap-2">
         <TrendingUp className="h-4 w-4" /> Rule-Based Smart Market Insight
       </h3>
       <p className="text-slate-200 leading-relaxed mb-4">
@@ -257,25 +257,25 @@ function TraceabilityInspector() {
         </div>
 
         <div className="mb-8">
-          <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Lifecycle Timeline</h3>
+          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Lifecycle Timeline</h3>
           <LotTimeline status={lot.status} dispatchStatus={lot.dispatch_status} paymentStatus={tx?.payment_status} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-            <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Source (Farmer)</div>
+            <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Source (Farmer)</div>
             <div className="font-semibold text-slate-900">{lot.farmer?.name || 'Not recorded yet'}</div>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-            <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Mandi Agent</div>
+            <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Mandi Agent</div>
             <div className="font-semibold text-slate-900">{lot.agent?.name || 'Not recorded yet'}</div>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-            <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Buyer (Merchant)</div>
+            <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Buyer (Merchant)</div>
             <div className="font-semibold text-slate-900">{tx?.merchant?.name || 'Not recorded yet'}</div>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
-            <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Settlement</div>
+            <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Settlement</div>
             <div className="font-semibold text-slate-900">{tx ? `₹${(tx.total_amount || 0).toLocaleString()}` : 'Not recorded yet'}</div>
             <div className="text-xs mt-1 text-slate-600">{tx?.payment_status || ''}</div>
           </div>
@@ -563,7 +563,7 @@ export default function ManagerDashboard() {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-3">
               <Activity className="h-6 w-6 text-blue-400" />
-              <span className="font-bold text-xl tracking-tight">
+              <span className="text-xl font-bold tracking-tight text-white">
                 Mandi Command Center
               </span>
             </div>
@@ -694,7 +694,7 @@ export default function ManagerDashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Line Chart — Traffic & Arrival Trend */}
                   <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-                    <h3 className="text-lg font-bold text-slate-800 mb-6">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-6">
                       Traffic &amp; Arrival Trend
                     </h3>
                     <div className="h-72">
@@ -743,7 +743,7 @@ export default function ManagerDashboard() {
 
                   {/* Bar Chart — Volume by Crop Type */}
                   <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-                    <h3 className="text-lg font-bold text-slate-800 mb-6">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-6">
                       Volume by Crop Type (Kg)
                     </h3>
                     <div className="h-72">
@@ -961,7 +961,7 @@ export default function ManagerDashboard() {
                       >
                         {/* Top row: badge + status */}
                         <div className="flex items-center justify-between">
-                          <span className="inline-block px-2.5 py-0.5 rounded-full text-sm font-bold bg-slate-800 text-white uppercase tracking-wider">
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-white uppercase tracking-wider">
                             {d.dispute_type}
                           </span>
                           <span
@@ -1067,7 +1067,7 @@ export default function ManagerDashboard() {
             {activeTab === "market" && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                  <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                  <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
                     <TrendingUp className="h-5 w-5 text-indigo-600" />
                     Market Price Analytics
                   </h2>

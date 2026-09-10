@@ -246,7 +246,7 @@ export default function PalledarDashboard() {
     .reduce((sum, t) => sum + (t.payment_amount || 0), 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 flex flex-col">
+    <div className="min-h-screen bg-slate-50 pb-20 flex flex-col">
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
       {/* Header */}
       <nav className="bg-emerald-600 text-white shadow-md flex-none">
@@ -258,7 +258,7 @@ export default function PalledarDashboard() {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setLang(lang === "EN" ? "HI" : lang === "HI" ? "KN" : "EN")}
-              className="text-sm bg-emerald-800 hover:bg-emerald-900 px-2 py-1 rounded border border-emerald-500 transition"
+              className="text-sm bg-emerald-800 hover:bg-emerald-900 px-2 py-1 rounded-lg border border-emerald-500 transition"
             >
               {lang === "EN" ? "हिंदी" : lang === "HI" ? "ಕನ್ನಡ" : "English"}
             </button>
@@ -276,26 +276,26 @@ export default function PalledarDashboard() {
           <>
             <div className="mb-6 flex justify-between items-end">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{t[lang].myTasks}</h1>
-                <p className="text-gray-700 text-sm">{t[lang].tasksDesc}</p>
+                <h1 className="text-2xl font-bold text-slate-900">{t[lang].myTasks}</h1>
+                <p className="text-slate-700 text-sm">{t[lang].tasksDesc}</p>
               </div>
               <div className="flex gap-2">
                 <div className="bg-yellow-100 text-yellow-800 p-2 rounded-lg text-center shadow-sm">
-                  <div className="text-xs font-bold uppercase tracking-wide">Active</div>
-                  <div className="text-xl font-black">{activeTasks.length}</div>
+                  <div className="text-xs font-semibold uppercase tracking-wide">Active</div>
+                  <div className="text-xl font-bold">{activeTasks.length}</div>
                 </div>
                 <div className="bg-green-100 text-green-800 p-2 rounded-lg text-center shadow-sm">
-                  <div className="text-xs font-bold uppercase tracking-wide">Done</div>
-                  <div className="text-xl font-black">{completedTasks.length}</div>
+                  <div className="text-xs font-semibold uppercase tracking-wide">Done</div>
+                  <div className="text-xl font-bold">{completedTasks.length}</div>
                 </div>
               </div>
             </div>
 
             {tasks.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
-                <ClipboardList className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-700 font-medium">{t[lang].noTasksTitle}</p>
-                <p className="text-sm text-gray-800 mt-1 px-4">
+              <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-slate-200">
+                <ClipboardList className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-700 font-medium">{t[lang].noTasksTitle}</p>
+                <p className="text-sm text-slate-800 mt-1 px-4">
                   {t[lang].noTasksDesc}
                 </p>
               </div>
@@ -304,7 +304,7 @@ export default function PalledarDashboard() {
                 {/* Active Tasks */}
                 {activeTasks.length > 0 && (
                   <div>
-                    <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">
+                    <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
                       🔴 {t[lang].activeTasks}
                     </h2>
                     <div className="space-y-3">
@@ -324,7 +324,7 @@ export default function PalledarDashboard() {
                 {/* Completed Tasks */}
                 {completedTasks.length > 0 && (
                   <div>
-                    <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">
+                    <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
                       ✅ {t[lang].completedTasks}
                     </h2>
                     <div className="space-y-3">
@@ -349,50 +349,50 @@ export default function PalledarDashboard() {
         {activeTab === "earnings" && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">{t[lang].earningsTitle}</h1>
-              <p className="text-gray-700 text-sm">{t[lang].earningsDesc}</p>
+              <h1 className="text-2xl font-bold text-slate-900">{t[lang].earningsTitle}</h1>
+              <p className="text-slate-700 text-sm">{t[lang].earningsDesc}</p>
             </div>
 
             {/* KPI Cards */}
             <div className="grid grid-cols-3 gap-3 mb-8">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 text-center">
                 <div className="inline-flex items-center justify-center bg-emerald-100 p-2 rounded-full mb-2">
                   <IndianRupee className="h-4 w-4 text-emerald-800" />
                 </div>
-                <div className="text-lg font-black text-gray-900">₹{totalEarned}</div>
-                <div className="text-xs text-gray-700 font-medium uppercase tracking-wide">
+                <div className="text-lg font-bold text-slate-900">₹{totalEarned}</div>
+                <div className="text-xs text-slate-700 font-medium uppercase tracking-wide">
                   {t[lang].totalEarned}
                 </div>
               </div>
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 text-center">
                 <div className="inline-flex items-center justify-center bg-yellow-100 p-2 rounded-full mb-2">
                   <Clock className="h-4 w-4 text-yellow-600" />
                 </div>
-                <div className="text-lg font-black text-yellow-600">₹{pendingPayment}</div>
-                <div className="text-xs text-gray-700 font-medium uppercase tracking-wide">
+                <div className="text-lg font-bold text-yellow-600">₹{pendingPayment}</div>
+                <div className="text-xs text-slate-700 font-medium uppercase tracking-wide">
                   {t[lang].pendingPay}
                 </div>
               </div>
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 text-center">
                 <div className="inline-flex items-center justify-center bg-green-100 p-2 rounded-full mb-2">
                   <CheckCircle2 className="h-4 w-4 text-green-800" />
                 </div>
-                <div className="text-lg font-black text-green-800">₹{paidAmount}</div>
-                <div className="text-xs text-gray-700 font-medium uppercase tracking-wide">
+                <div className="text-lg font-bold text-green-800">₹{paidAmount}</div>
+                <div className="text-xs text-slate-700 font-medium uppercase tracking-wide">
                   {t[lang].paid}
                 </div>
               </div>
             </div>
 
             {/* Payment History */}
-            <h2 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
               {t[lang].paymentHistory}
             </h2>
             {completedTasks.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
-                <Wallet className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-700 font-medium">No Earnings Yet</p>
-                <p className="text-sm text-gray-800 mt-1 px-4">
+              <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-slate-200">
+                <Wallet className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-700 font-medium">No Earnings Yet</p>
+                <p className="text-sm text-slate-800 mt-1 px-4">
                   Complete tasks to start earning. Your payment history will appear here.
                 </p>
               </div>
@@ -401,25 +401,25 @@ export default function PalledarDashboard() {
                 {completedTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-4"
+                    className="bg-white rounded-xl shadow-sm border border-slate-200 p-4"
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex items-start gap-3">
                         <div
-                          className={`p-2 rounded-lg ${TASK_TYPE_CONFIG[task.task_type]?.color || "bg-gray-100 text-gray-800"}`}
+                          className={`p-2 rounded-lg ${TASK_TYPE_CONFIG[task.task_type]?.color || "bg-slate-100 text-slate-800"}`}
                         >
                           {TASK_TYPE_CONFIG[task.task_type]?.icon || (
                             <Package className="h-3.5 w-3.5" />
                           )}
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900 text-sm">
+                          <p className="font-semibold text-slate-900 text-sm">
                             {TASK_TYPE_CONFIG[task.task_type]?.label || task.task_type}
                           </p>
-                          <p className="text-sm text-gray-700 mt-0.5">
-                            {task.lots?.crop_type} • {task.lots?.weight_kg}kg<br/><span className="text-xs font-mono text-gray-500 mt-1 block">{formatLotId(task.lot_id)}</span>
+                          <p className="text-sm text-slate-700 mt-0.5">
+                            {task.lots?.crop_type} • {task.lots?.weight_kg}kg<br/><span className="text-xs font-mono text-slate-500 mt-1 block">{formatLotId(task.lot_id)}</span>
                           </p>
-                          <p className="text-xs text-gray-800 mt-1">
+                          <p className="text-xs text-slate-800 mt-1">
                             {task.completed_at
                               ? new Date(task.completed_at).toLocaleDateString("en-IN", {
                                   day: "numeric",
@@ -435,7 +435,7 @@ export default function PalledarDashboard() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-gray-900">
+                        <p className="font-bold text-slate-900">
                           ₹{task.payment_amount || 0}
                         </p>
                         <span
@@ -460,17 +460,17 @@ export default function PalledarDashboard() {
         {/* --- TAB: MARKET --- */}
         {activeTab === "market" && (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t[lang].tabMarket}</h1>
-            <p className="text-gray-800 mb-6">Live mandi rates and trading history.</p>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">{t[lang].tabMarket}</h1>
+            <p className="text-slate-800 mb-6">Live mandi rates and trading history.</p>
             <PriceHistory lang={lang} />
           </div>
         )}
 
         {activeTab === "profile" && (
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">{t[lang].profile}</h1>
+            <h1 className="text-2xl font-bold text-slate-900 mb-6">{t[lang].profile}</h1>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
               {/* Profile Header */}
               <div className="bg-emerald-600 p-6 flex flex-col items-center text-white">
                 <div className="bg-white p-4 rounded-full mb-3 text-emerald-800">
@@ -482,35 +482,35 @@ export default function PalledarDashboard() {
 
               {/* Profile Details */}
               <div className="p-4 space-y-4">
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                  <Phone className="h-5 w-5 text-gray-800" />
+                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                  <Phone className="h-5 w-5 text-slate-800" />
                   <div>
-                    <div className="text-sm text-gray-700">Phone Number</div>
-                    <div className="font-medium text-gray-900">{user.phone_number}</div>
+                    <div className="text-sm text-slate-700">Phone Number</div>
+                    <div className="font-medium text-slate-900">{user.phone_number}</div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                  <ClipboardList className="h-5 w-5 text-gray-800" />
+                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                  <ClipboardList className="h-5 w-5 text-slate-800" />
                   <div>
-                    <div className="text-sm text-gray-700">Role</div>
-                    <div className="font-medium text-gray-900 capitalize">
+                    <div className="text-sm text-slate-700">Role</div>
+                    <div className="font-medium text-slate-900 capitalize">
                       {user.role?.toLowerCase().replace("_", " ") || "Palledar"}
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                  <Hash className="h-5 w-5 text-gray-800" />
+                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                  <Hash className="h-5 w-5 text-slate-800" />
                   <div>
-                    <div className="text-sm text-gray-700">{t[lang].tasksDone}</div>
-                    <div className="font-medium text-gray-900">{completedTasks.length}</div>
+                    <div className="text-sm text-slate-700">{t[lang].tasksDone}</div>
+                    <div className="font-medium text-slate-900">{completedTasks.length}</div>
                   </div>
                 </div>
               </div>
 
               {/* Sign Out */}
-              <div className="p-4 border-t border-gray-200">
+              <div className="p-4 border-t border-slate-200">
                 <button
                   onClick={() => {
                     localStorage.removeItem("mandi_user_palledar");
@@ -562,7 +562,7 @@ export default function PalledarDashboard() {
         <button
           onClick={() => setActiveTab("tasks")}
           className={`flex flex-col items-center transition-colors ${
-            activeTab === "tasks" ? "text-emerald-800" : "text-gray-800 hover:text-emerald-800"
+            activeTab === "tasks" ? "text-emerald-800" : "text-slate-800 hover:text-emerald-800"
           }`}
         >
           <ClipboardList className="h-6 w-6" />
@@ -571,7 +571,7 @@ export default function PalledarDashboard() {
         <button
           onClick={() => setActiveTab("earnings")}
           className={`flex flex-col items-center transition-colors ${
-            activeTab === "earnings" ? "text-emerald-800" : "text-gray-800 hover:text-emerald-800"
+            activeTab === "earnings" ? "text-emerald-800" : "text-slate-800 hover:text-emerald-800"
           }`}
         >
           <Wallet className="h-6 w-6" />
@@ -579,7 +579,7 @@ export default function PalledarDashboard() {
         </button>
         <button 
           onClick={() => setActiveTab("market")}
-          className={`flex flex-col items-center transition-colors ${activeTab === "market" ? "text-emerald-800" : "text-gray-800 hover:text-emerald-800"}`}
+          className={`flex flex-col items-center transition-colors ${activeTab === "market" ? "text-emerald-800" : "text-slate-800 hover:text-emerald-800"}`}
         >
           <TrendingUp className="h-6 w-6" />
           <span className="text-xs mt-1 font-medium">{t[lang].tabMarket}</span>
@@ -588,7 +588,7 @@ export default function PalledarDashboard() {
         <button
           onClick={() => setActiveTab("profile")}
           className={`flex flex-col items-center transition-colors ${
-            activeTab === "profile" ? "text-emerald-800" : "text-gray-800 hover:text-emerald-800"
+            activeTab === "profile" ? "text-emerald-800" : "text-slate-800 hover:text-emerald-800"
           }`}
         >
           <User className="h-6 w-6" />
@@ -613,14 +613,14 @@ function TaskCard({
 }) {
   const taskConfig = TASK_TYPE_CONFIG[task.task_type] || {
     label: task.task_type,
-    color: "bg-gray-100 text-gray-800",
+    color: "bg-slate-100 text-slate-800",
     icon: <Package className="h-3.5 w-3.5" />,
   };
   const statusConfig = STATUS_CONFIG[task.status] || STATUS_CONFIG.PENDING;
   const isUpdating = updating === task.id;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
       <div className="p-4">
         {/* Top row: task type badge + status badge */}
         <div className="flex justify-between items-center mb-3">
@@ -641,16 +641,16 @@ function TaskCard({
         {/* Lot details */}
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="font-bold text-gray-900">
+            <h3 className="font-bold text-slate-900">
               {task.lots?.crop_type || "Unknown Crop"}
             </h3>
-            <p className="text-sm text-gray-700 mt-0.5">
+            <p className="text-sm text-slate-700 mt-0.5">
               {task.lots?.weight_kg ? `${task.lots.weight_kg} kg` : "—"}
             </p>
           </div>
           {task.payment_amount != null && (
             <div className="text-right">
-              <p className="text-sm text-gray-700">Payment</p>
+              <p className="text-sm text-slate-700">Payment</p>
               <p className="font-bold text-emerald-800">₹{task.payment_amount}</p>
             </div>
           )}
@@ -694,7 +694,7 @@ function TaskCard({
 
       {/* Timestamp */}
       <div className="px-4 pb-3">
-        <p className="text-xs text-gray-800">
+        <p className="text-xs text-slate-800">
           Assigned: {new Date(task.created_at).toLocaleString("en-IN", {
             day: "numeric",
             month: "short",

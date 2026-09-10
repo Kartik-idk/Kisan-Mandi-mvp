@@ -35,7 +35,7 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
           <h3 className="font-bold text-slate-800 text-lg">{title}</h3>
           <button 
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors rounded-lg-lg-full p-1 hover:bg-slate-200"
+            className="text-slate-400 hover:text-slate-600 transition-colors rounded-full p-1 hover:bg-slate-200"
           >
             ✕
           </button>

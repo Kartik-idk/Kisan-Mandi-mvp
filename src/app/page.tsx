@@ -110,13 +110,13 @@ export default function AuthPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <Tractor className="mx-auto h-12 w-12 text-green-800" />
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-bold text-slate-900">
           Kisan Mandi Portal
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-800">
+        <p className="mt-2 text-center text-sm text-slate-800">
           {step === "OTP" 
             ? "Verification Required" 
             : isLogin ? "Sign in to your account" : "Register a new account"}
@@ -131,15 +131,15 @@ export default function AuthPage() {
               {!isLogin && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Full Name</label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
+                    <label className="block text-sm font-medium text-slate-700">Full Name</label>
+                    <div className="mt-1 relative rounded-lg shadow-sm">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <UserIcon className="h-5 w-5 text-gray-800" />
+                        <UserIcon className="h-5 w-5 text-slate-800" />
                       </div>
                       <input
                         type="text"
                         required
-                        className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-400 text-gray-900 placeholder-gray-500 rounded-md py-2 border"
+                        className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg py-2 border"
                         placeholder="e.g. Ramesh Kumar"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -148,13 +148,13 @@ export default function AuthPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Role</label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
+                    <label className="block text-sm font-medium text-slate-700">Role</label>
+                    <div className="mt-1 relative rounded-lg shadow-sm">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Briefcase className="h-5 w-5 text-gray-800" />
+                        <Briefcase className="h-5 w-5 text-slate-800" />
                       </div>
                       <select
-                        className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-400 text-gray-900 placeholder-gray-500 rounded-md py-2 border"
+                        className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg py-2 border"
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
                       >
@@ -169,15 +169,15 @@ export default function AuthPage() {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-                <div className="mt-1 relative rounded-md shadow-sm">
+                <label className="block text-sm font-medium text-slate-700">Phone Number</label>
+                <div className="mt-1 relative rounded-lg shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Phone className="h-5 w-5 text-gray-800" />
+                    <Phone className="h-5 w-5 text-slate-800" />
                   </div>
                   <input
                     type="tel"
                     required
-                    className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-gray-400 text-gray-900 placeholder-gray-500 rounded-md py-2 border"
+                    className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg py-2 border"
                     placeholder="9876543210"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
@@ -195,7 +195,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg-lg-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
                 >
                   {loading ? "Sending OTP..." : "Get OTP"}
                 </button>
@@ -203,7 +203,7 @@ export default function AuthPage() {
             </form>
           ) : (
             <form className="space-y-6" onSubmit={handleVerifyOtp}>
-              <div className="text-center bg-gray-50 p-4 rounded-lg mb-4">
+              <div className="text-center bg-slate-50 p-4 rounded-lg mb-4">
                 <p className="text-sm text-green-800">
                   We've sent a one-time password to<br/>
                   <span className="font-bold">{phone}</span>
@@ -211,17 +211,17 @@ export default function AuthPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 text-center mb-2">Enter 4-Digit OTP</label>
+                <label className="block text-sm font-medium text-slate-700 text-center mb-2">Enter 4-Digit OTP</label>
                 <input
                   type="text"
                   required
                   maxLength={4}
-                  className="focus:ring-green-500 text-center tracking-widest text-2xl font-bold focus:border-green-500 block w-full sm:text-sm border-gray-400 text-gray-900 placeholder-gray-500 rounded-md py-3 border"
+                  className="focus:ring-green-500 text-center tracking-widest text-2xl font-bold focus:border-green-500 block w-full sm:text-sm border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg py-3 border"
                   placeholder="••••"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
                 />
-                <p className="text-sm text-gray-800 text-center mt-2">
+                <p className="text-sm text-slate-800 text-center mt-2">
                   (Hackathon Demo: You can enter any 4 digits)
                 </p>
               </div>
@@ -236,7 +236,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={loading || otp.length < 4}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg-lg-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
                 >
                   {loading ? "Verifying..." : "Verify & Continue"}
                 </button>
@@ -258,10 +258,10 @@ export default function AuthPage() {
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200" />
+                  <div className="w-full border-t border-slate-200" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-700">Or</span>
+                  <span className="px-2 bg-white text-slate-700">Or</span>
                 </div>
               </div>
 

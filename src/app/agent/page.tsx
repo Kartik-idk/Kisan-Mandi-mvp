@@ -211,11 +211,11 @@ export default function AgentDashboard() {
   };
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-700">Loading Dashboard...</div>;
+    return <div className="p-8 text-center text-slate-700">Loading Dashboard...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 relative">
+    <div className="min-h-screen bg-slate-50 relative">
       {/* Modal for Auctioning */}
       {auctioningLot && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -228,12 +228,12 @@ export default function AgentDashboard() {
             {/* Live Bids Section */}
             {bids.filter(b => b.lot_id === auctioningLot?.id).length > 0 && (
               <div className="px-6 pt-4">
-                <h4 className="text-sm font-bold text-gray-700 mb-2">Live Bids</h4>
+                <h4 className="text-sm font-bold text-slate-700 mb-2">Live Bids</h4>
                 <div className="space-y-2 mb-4">
                   {bids.filter(b => b.lot_id === auctioningLot?.id).map(bid => (
-                    <div key={bid.id} className="flex justify-between items-center bg-blue-100 border border-blue-300 p-3 rounded border border-blue-100">
+                    <div key={bid.id} className="flex justify-between items-center bg-blue-100 border border-blue-300 p-3 rounded-lg">
                       <div>
-                        <p className="text-sm font-bold text-blue-900">{bid.users?.name}</p>
+                        <p className="text-sm font-semibold text-slate-900">{bid.users?.name}</p>
                         <p className="text-sm text-blue-700">₹{bid.amount} per Qtl</p>
                       </div>
                       <button 
@@ -242,7 +242,7 @@ export default function AgentDashboard() {
                           setSelectedMerchant(bid.merchant_id);
                           setPricePerQuintal(bid.amount.toString());
                         }}
-                        className="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-700"
+                        className="bg-blue-600 text-white px-3 py-1 text-sm rounded-lg hover:bg-blue-700"
                       >
                         Select Bid
                       </button>
@@ -253,9 +253,9 @@ export default function AgentDashboard() {
             )}
             <form onSubmit={submitAuction} className="p-6 space-y-4 pt-0">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Buyer (Merchant)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Buyer (Merchant)</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
                   value={selectedMerchant}
                   onChange={(e) => setSelectedMerchant(e.target.value)}
                 >
@@ -266,30 +266,30 @@ export default function AgentDashboard() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Price per Quintal (₹)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Price per Quintal (₹)</label>
                 <input 
                   type="number" 
                   required
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
                   value={pricePerQuintal}
                   onChange={(e) => setPricePerQuintal(e.target.value)}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Deductions (₹) - Commission/Labour</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Deductions (₹) - Commission/Labour</label>
                 <input 
                   type="number" 
                   required
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
                   value={deductions}
                   onChange={(e) => setDeductions(e.target.value)}
                 />
               </div>
               
-              <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 mt-4 space-y-2">
+              <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 mt-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-700">Total Amount:</span>
-                  <span className="font-medium text-gray-900">₹{((parseFloat(pricePerQuintal) || 0) * (auctioningLot.weight_kg / 100)).toFixed(2)}</span>
+                  <span className="text-slate-700">Total Amount:</span>
+                  <span className="font-medium text-slate-900">₹{((parseFloat(pricePerQuintal) || 0) * (auctioningLot.weight_kg / 100)).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-red-500 border-b pb-2">
                   <span>Deductions:</span>
@@ -305,14 +305,14 @@ export default function AgentDashboard() {
                 <button 
                   type="button" 
                   onClick={() => setAuctioningLot(null)}
-                  className="flex-1 bg-white border border-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition"
+                  className="flex-1 bg-white border border-slate-200 text-slate-700 py-2 rounded-lg hover:bg-slate-50 transition"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
                   disabled={formLoading}
-                  className="flex-1 bg-green-600 text-white py-2 rounded-lg-lg-lg hover:bg-green-700 transition"
+                  className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
                 >
                   Confirm Sale
                 </button>
@@ -332,9 +332,9 @@ export default function AgentDashboard() {
             </div>
             <form onSubmit={assignPalledar} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Select Palledar</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Select Palledar</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
                   value={selectedPalledar}
                   onChange={(e) => setSelectedPalledar(e.target.value)}
                   required
@@ -346,9 +346,9 @@ export default function AgentDashboard() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Task Type</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Task Type</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
                   value={taskType}
                   onChange={(e) => setTaskType(e.target.value)}
                 >
@@ -359,11 +359,11 @@ export default function AgentDashboard() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Payment Amount (₹)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Payment Amount (₹)</label>
                 <input 
                   type="number" 
                   required
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
                   value={taskPayment}
                   onChange={(e) => setTaskPayment(e.target.value)}
                 />
@@ -372,14 +372,14 @@ export default function AgentDashboard() {
                 <button 
                   type="button" 
                   onClick={() => setTaskModal(null)}
-                  className="flex-1 bg-white border border-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition"
+                  className="flex-1 bg-white border border-slate-200 text-slate-700 py-2 rounded-lg hover:bg-slate-50 transition"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit" 
                   disabled={formLoading}
-                  className="flex-1 bg-emerald-600 text-white py-2 rounded-lg-lg-lg hover:bg-emerald-700 transition"
+                  className="flex-1 bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition"
                 >
                   Assign Task
                 </button>
@@ -393,12 +393,12 @@ export default function AgentDashboard() {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-2">
               <LayoutDashboard className="h-6 w-6 text-indigo-800" />
-              <span className="font-semibold text-xl">Mandi Portal - Agent View</span>
+              <h1 className="text-2xl font-bold text-slate-900">Mandi Portal - Agent View</h1>
             </div>
             {agent && (
               <div className="flex items-center gap-4">
-                <div className="text-sm text-gray-800">Logged in as: <strong>{agent.name}</strong></div>
-                <button onClick={() => window.location.href = "/"} className="text-sm text-red-800 underline">Sign Out</button>
+                <div className="text-sm text-slate-600">Logged in as: <strong className="font-semibold text-slate-900">{agent.name}</strong></div>
+                <button onClick={() => window.location.href = "/"} className="text-sm font-medium text-red-700 underline">Sign Out</button>
               </div>
             )}
           </div>
@@ -410,16 +410,16 @@ export default function AgentDashboard() {
         {/* Left Column: Form */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-xl shadow-sm border p-6">
-            <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <Plus className="h-5 w-5 text-indigo-500" />
               Register New Lot
             </h2>
             
             <form onSubmit={handleAddLot} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Select Farmer</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Select Farmer</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
                   value={farmerId}
                   onChange={(e) => setFarmerId(e.target.value)}
                   required
@@ -432,9 +432,9 @@ export default function AgentDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Crop Type</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Crop Type</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
                   value={cropType}
                   onChange={(e) => setCropType(e.target.value)}
                 >
@@ -446,11 +446,11 @@ export default function AgentDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Weight (in Quintals/Kg)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Weight (in Quintals/Kg)</label>
                 <input 
                   type="number"
                   placeholder="e.g. 500"
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
                   required
@@ -458,9 +458,9 @@ export default function AgentDashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Quality Grade</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Quality Grade</label>
                 <select 
-                  className="w-full border-gray-400 text-gray-900 placeholder-gray-500 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
                   value={quality}
                   onChange={(e) => setQuality(e.target.value)}
                 >
@@ -473,7 +473,7 @@ export default function AgentDashboard() {
               <button 
                 type="submit" 
                 disabled={formLoading}
-                className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg-lg-lg hover:bg-indigo-700 transition disabled:opacity-50"
+                className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
               >
                 {formLoading ? "Saving..." : "Register Lot Entry"}
               </button>
@@ -484,38 +484,38 @@ export default function AgentDashboard() {
         {/* Right Column: List */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-sm border p-6">
-            <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <Truck className="h-5 w-5 text-indigo-500" />
               Active Lots
             </h2>
             
             {lots.length === 0 ? (
-              <div className="text-center py-10 text-gray-700">
+              <div className="text-center py-10 text-slate-700">
                 No lots registered yet.
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-slate-200">
+                  <thead className="bg-slate-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">Farmer</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">Crop</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">Grade</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Farmer</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Crop</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Grade</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white divide-y divide-slate-200">
                     {lots.map((lot) => (
                       <tr key={lot.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{lot.users?.name || "Unknown"}</div><div className="text-xs text-gray-500 font-mono mt-1">{formatLotId(lot.id)}</div>
+                          <div className="text-sm font-semibold text-slate-900">{lot.users?.name || "Unknown"}</div><div className="text-xs text-slate-500 font-mono mt-1">{formatLotId(lot.id)}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{lot.crop_type} ({lot.weight_kg}kg)</div>
+                          <div className="text-sm text-slate-900">{lot.crop_type} ({lot.weight_kg}kg)</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-semibold text-gray-700">{lot.quality_grade || 'N/A'}</div>
+                          <div className="text-sm font-semibold text-slate-700">{lot.quality_grade || 'N/A'}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${
@@ -539,7 +539,7 @@ export default function AgentDashboard() {
                             </button>
                           )}
                           {lot.status === 'AUCTIONED' && lot.dispatch_status !== 'READY' && (
-                            <span className="text-gray-800">Sold</span>
+                            <span className="text-slate-800">Sold</span>
                           )}
                           {lot.status === 'AUCTIONED' && lot.dispatch_status === 'READY' && (
                             <button onClick={() => updateLotStatus(lot.id, 'DISPATCHED')} className="text-blue-800 hover:text-blue-900 bg-blue-100 border border-blue-300 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow">
@@ -550,7 +550,7 @@ export default function AgentDashboard() {
                             <span className="text-blue-800 font-bold">Dispatched 🚚</span>
                           )}
                           {tasks.some(t => t.lot_id === lot.id) ? (
-                            <span className="text-gray-800 bg-gray-50 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow border-slate-200">Palledar Assigned</span>
+                            <span className="text-slate-800 bg-slate-50 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow border-slate-200">Palledar Assigned</span>
                           ) : (
                             <button onClick={() => setTaskModal(lot)} className="text-emerald-800 hover:text-emerald-900 bg-emerald-100 border border-emerald-300 px-4 py-2 rounded-lg font-bold shadow-sm hover:shadow">
                               Assign Palledar
@@ -569,35 +569,35 @@ export default function AgentDashboard() {
         {/* Palledar Tasks Section */}
         <div className="lg:col-span-3 mt-8">
           <div className="bg-white rounded-xl shadow-sm border p-6">
-            <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-indigo-500" />
               Palledar Payments
             </h2>
             
             {tasks.length === 0 ? (
-              <div className="text-center py-10 text-gray-700">
+              <div className="text-center py-10 text-slate-700">
                 No palledar tasks assigned yet.
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-slate-200">
+                  <thead className="bg-slate-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">Palledar</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">Task</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">Amount</th>
-                      <th className="px-6 py-3 text-right text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Palledar</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Task</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Amount</th>
+                      <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white divide-y divide-slate-200">
                     {tasks.map((task) => (
                       <tr key={task.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{task.users?.name || "Unknown"}</div>
+                          <div className="text-sm font-semibold text-slate-900">{task.users?.name || "Unknown"}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{task.task_type}</div>
+                          <div className="text-sm text-slate-900">{task.task_type}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${
@@ -607,7 +607,7 @@ export default function AgentDashboard() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-semibold text-gray-900">₹{task.payment_amount}</div>
+                          <div className="text-sm font-semibold text-slate-900">₹{task.payment_amount}</div>
                           <div className={`text-sm ${task.payment_status === 'PAID' ? 'text-green-800' : 'text-red-500'}`}>
                             {task.payment_status}
                           </div>
@@ -631,7 +631,7 @@ export default function AgentDashboard() {
 
         {/* Market Trends Section */}
         <div className="lg:col-span-3 mt-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
             <TrendingUp className="h-6 w-6 text-indigo-600" />
             Market Price Trends
           </h2>

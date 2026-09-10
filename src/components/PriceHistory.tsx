@@ -90,13 +90,13 @@ export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN
   }[lang];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between flex-wrap gap-2">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-indigo-600" />
           <div>
-            <h3 className="font-bold text-gray-900">{t.title}</h3>
-            <p className="text-xs text-gray-700">{t.desc}</p>
+            <h3 className="font-bold text-slate-900">{t.title}</h3>
+            <p className="text-xs text-slate-700">{t.desc}</p>
           </div>
         </div>
         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 border border-green-200 rounded-lg text-xs font-semibold text-green-800">
@@ -107,32 +107,32 @@ export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN
 
       {priceData.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-700">{t.noData}</p>
+          <p className="text-slate-700">{t.noData}</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-slate-50">
               <tr>
-                <th className="px-4 py-2.5 text-left text-xs font-bold text-gray-900 uppercase">{t.crop}</th>
-                <th className="px-4 py-2.5 text-right text-xs font-bold text-gray-900 uppercase">{t.avg}</th>
-                <th className="px-4 py-2.5 text-right text-xs font-bold text-gray-900 uppercase">{t.msp}</th>
-                <th className="px-4 py-2.5 text-right text-xs font-bold text-gray-900 uppercase">{t.spread}</th>
-                <th className="px-4 py-2.5 text-right text-xs font-bold text-gray-900 uppercase">{t.min}</th>
-                <th className="px-4 py-2.5 text-right text-xs font-bold text-gray-900 uppercase">{t.trades}</th>
+                <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase">{t.crop}</th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-500 uppercase">{t.avg}</th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-500 uppercase">{t.msp}</th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-500 uppercase">{t.spread}</th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-500 uppercase">{t.min}</th>
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-slate-500 uppercase">{t.trades}</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-slate-200">
               {priceData.map((row) => {
                 const spreadNum = Number(row.spread);
                 const isAboveMsp = spreadNum >= 0;
 
                 return (
-                  <tr key={row.crop_type} className="hover:bg-gray-50 transition-colors">
+                  <tr key={row.crop_type} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <Package className="h-4 w-4 text-green-600" />
-                        <span className="text-sm font-bold text-gray-900">{row.crop_type}</span>
+                        <span className="text-sm font-semibold text-slate-900">{row.crop_type}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-right font-bold text-blue-700">₹{row.avg_price}</td>
@@ -151,13 +151,13 @@ export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN
                           {isAboveMsp ? `+₹${row.spread}` : `-₹${Math.abs(spreadNum)}`} vs MSP
                         </span>
                       ) : (
-                        <span className="text-gray-400">—</span>
+                        <span className="text-slate-400">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-right text-xs text-gray-700">
+                    <td className="px-4 py-3 whitespace-nowrap text-right text-xs text-slate-700">
                       <span className="text-red-700 font-medium">₹{row.min_price}</span> / <span className="text-green-700 font-medium">₹{row.max_price}</span>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium text-gray-800">{row.total_trades}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium text-slate-800">{row.total_trades}</td>
                   </tr>
                 );
               })}

@@ -26,7 +26,7 @@ export default function LotTimeline({ status, dispatchStatus, paymentStatus }: {
     <div className="w-full py-4">
       <div className="flex items-center justify-between relative">
         {/* Background tracking line */}
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full" />
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 rounded-full" />
         
         {/* Active tracking line */}
         <div 
@@ -43,10 +43,10 @@ export default function LotTimeline({ status, dispatchStatus, paymentStatus }: {
               <div className={`w-4 h-4 rounded-full border-2 transition-colors duration-300 ${
                 isCompleted ? 'bg-green-500 border-green-500' : 
                 isActive ? 'bg-white border-green-500 ring-4 ring-green-100' : 
-                'bg-white border-gray-300'
+                'bg-white border-slate-300'
               }`} />
               <span className={`text-[10px] sm:text-xs absolute -bottom-5 whitespace-nowrap font-medium ${
-                isCompleted || isActive ? 'text-gray-900' : 'text-gray-400'
+                isCompleted || isActive ? 'text-slate-900' : 'text-slate-400'
               }`}>
                 {stage.label}
               </span>

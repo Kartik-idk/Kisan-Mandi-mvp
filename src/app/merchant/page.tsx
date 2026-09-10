@@ -196,7 +196,7 @@ export default function MerchantDashboard() {
 
   if (loading) {
     return (
-      <div className="p-8 text-center text-gray-700 flex justify-center items-center min-h-screen">
+      <div className="p-8 text-center text-slate-700 flex justify-center items-center min-h-screen">
         <span className="animate-pulse">Loading Merchant Dashboard...</span>
       </div>
     );
@@ -229,7 +229,7 @@ export default function MerchantDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
       {/* Header */}
       <nav className="bg-blue-800 text-white shadow-lg">
@@ -237,7 +237,7 @@ export default function MerchantDashboard() {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-3">
               <Store className="h-7 w-7" />
-              <span className="font-bold text-xl tracking-tight">
+              <span className="text-xl font-bold tracking-tight text-white">
                 Mandi Portal - Merchant View
               </span>
             </div>
@@ -271,7 +271,7 @@ export default function MerchantDashboard() {
                 className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab.key
                     ? "border-blue-600 text-blue-700 bg-blue-100 border border-blue-300/50"
-                    : "border-transparent text-gray-700 hover:text-gray-700 hover:border-gray-400 text-gray-900 placeholder-gray-500"
+                    : "border-transparent text-slate-700 hover:text-slate-700 hover:border-slate-300 hover:text-slate-900"
                 }`}
               >
                 {tab.icon}
@@ -288,10 +288,10 @@ export default function MerchantDashboard() {
         {activeTab === "supply" && (
           <div>
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-slate-900">
                 Supply Board
               </h1>
-              <p className="text-gray-700 text-sm mt-1">
+              <p className="text-slate-700 text-sm mt-1">
                 Browse available crop lots ready for purchase. All lots shown
                 have been weighed and verified.
               </p>
@@ -299,11 +299,11 @@ export default function MerchantDashboard() {
 
             {lots.length === 0 ? (
               <div className="text-center py-16 bg-white rounded-xl shadow-sm border">
-                <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-700 font-medium">
+                <Package className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-700 font-medium">
                   No lots available for purchase right now.
                 </p>
-                <p className="text-sm text-gray-800 mt-1">
+                <p className="text-sm text-slate-800 mt-1">
                   Check back later — new lots are added after weighing.
                 </p>
               </div>
@@ -312,19 +312,19 @@ export default function MerchantDashboard() {
                 {lots.map((lot) => (
                   <div
                     key={formatLotId(lot.id)}
-                    className="bg-white rounded-xl shadow-sm border border-gray-400 text-gray-900 placeholder-gray-500 overflow-hidden hover:shadow-md transition-shadow"
+                    className="bg-white rounded-xl shadow-sm border-slate-200 overflow-hidden hover:shadow-md transition-shadow"
                   >
                     <div className="p-5">
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h3 className="font-bold text-lg text-gray-900">
+                          <h3 className="text-lg font-semibold text-slate-900">
                             {lot.crop_type}
                           </h3>
-                          <p className="text-sm text-gray-700 mt-1">
+                          <p className="text-sm text-slate-700 mt-1">
                             Agent: {lot.users?.name || "Unknown"}
                           </p>
                           {lot.users?.phone_number && (
-                            <p className="text-sm text-gray-800">
+                            <p className="text-sm text-slate-800">
                               📞 {lot.users.phone_number}
                             </p>
                           )}
@@ -342,23 +342,23 @@ export default function MerchantDashboard() {
                         </span>
                       </div>
 
-                      <div className="flex items-end justify-between bg-gray-50 rounded-lg p-3 mb-4">
+                      <div className="flex items-end justify-between bg-slate-50 rounded-lg p-3 mb-4">
                         <div>
-                          <p className="text-sm text-gray-900 font-bold uppercase tracking-wide font-medium">
+                          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
                             Weight
                           </p>
-                          <p className="text-2xl font-black text-gray-800">
+                          <p className="text-2xl font-bold text-slate-900">
                             {lot.weight_kg}{" "}
-                            <span className="text-sm font-normal text-gray-700">
+                            <span className="text-sm font-normal text-slate-700">
                               kg
                             </span>
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm text-gray-900 font-bold uppercase tracking-wide font-medium">
+                          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
                             Quintals
                           </p>
-                          <p className="text-lg font-bold text-indigo-800">
+                          <p className="text-xl font-bold text-indigo-800">
                             {(lot.weight_kg / 100).toFixed(1)}
                           </p>
                         </div>
@@ -367,7 +367,7 @@ export default function MerchantDashboard() {
                       <button
                         onClick={() => handlePlaceBid(lot)}
                         disabled={biddedLots[lot.id]}
-                        className={`w-full py-2.5 px-4 rounded-lg transition font-semibold text-sm flex items-center justify-center gap-2 ${biddedLots[lot.id] ? "bg-gray-100 text-gray-800 cursor-not-allowed" : "bg-green-600 text-white hover:bg-green-700"}`}
+                        className={`w-full py-2.5 px-4 rounded-lg transition font-semibold text-sm flex items-center justify-center gap-2 ${biddedLots[lot.id] ? "bg-slate-100 text-slate-800 cursor-not-allowed" : "bg-green-600 text-white hover:bg-green-700"}`}
                       >
                         <ShoppingCart className="h-4 w-4" />
                         {biddedLots[lot.id] ? "Bid Placed" : "Place Bid"}
@@ -384,79 +384,79 @@ export default function MerchantDashboard() {
         {activeTab === "purchases" && (
           <div>
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-slate-900">
                 My Purchases
               </h1>
-              <p className="text-gray-700 text-sm mt-1">
+              <p className="text-slate-700 text-sm mt-1">
                 Track your purchased lots, payments, and dispatch status.
               </p>
             </div>
 
             {purchases.length === 0 ? (
               <div className="text-center py-16 bg-white rounded-xl shadow-sm border">
-                <ShoppingCart className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-700 font-medium">
+                <ShoppingCart className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-700 font-medium">
                   No purchases yet.
                 </p>
-                <p className="text-sm text-gray-800 mt-1">
+                <p className="text-sm text-slate-800 mt-1">
                   Head to the Supply Board to place bids on available lots.
                 </p>
               </div>
             ) : (
               <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                  <table className="min-w-full divide-y divide-slate-200">
+                    <thead className="bg-slate-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Crop Details
                         </th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Agent
                         </th>
-                        <th className="px-6 py-3 text-right text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Rate (₹/Qtl)
                         </th>
-                        <th className="px-6 py-3 text-right text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Total Amount
                         </th>
-                        <th className="px-6 py-3 text-center text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Payment
                         </th>
-                        <th className="px-6 py-3 text-center text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Dispatch
                         </th>
-                        <th className="px-6 py-3 text-right text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Actions
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-slate-200">
                       {purchases.map((tx) => {
                         const lot = tx.lots;
                         const dispatchStatus =
                           lot?.dispatch_status || "PENDING";
                         return (
-                          <tr key={tx.id} className="hover:bg-gray-50">
+                          <tr key={tx.id} className="hover:bg-slate-50">
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-semibold text-slate-900">
                                 {lot?.crop_type || "N/A"}
                               </div>
-                              <div className="text-sm text-gray-700">
+                              <div className="text-sm text-slate-700">
                                 {lot?.weight_kg}kg · Grade{" "}
                                 {lot?.quality_grade}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">
+                              <div className="text-sm text-slate-900">
                                 {lot?.users?.name || "N/A"}
                               </div>
-                              <div className="text-sm text-gray-800">
+                              <div className="text-sm text-slate-800">
                                 {lot?.users?.phone_number}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <span className="text-sm font-semibold text-gray-900">
+                              <span className="text-sm font-semibold text-slate-900">
                                 ₹{tx.price_per_quintal}
                               </span>
                             </td>
@@ -483,7 +483,7 @@ export default function MerchantDashboard() {
                                     ? "bg-blue-100 text-blue-800"
                                     : dispatchStatus === "DISPATCHED"
                                       ? "bg-green-100 text-green-800"
-                                      : "bg-gray-100 text-gray-800"
+                                      : "bg-slate-100 text-slate-800"
                                 }`}
                               >
                                 <Truck className="h-3 w-3 mr-1" />
@@ -537,10 +537,10 @@ export default function MerchantDashboard() {
         {activeTab === "prices" && (
           <div>
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-slate-900">
                 Price History
               </h1>
-              <p className="text-gray-700 text-sm mt-1">
+              <p className="text-slate-700 text-sm mt-1">
                 Market price analytics — compare rates across crops to make
                 informed purchasing decisions.
               </p>
@@ -548,11 +548,11 @@ export default function MerchantDashboard() {
 
             {priceData.length === 0 ? (
               <div className="text-center py-16 bg-white rounded-xl shadow-sm border">
-                <TrendingUp className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-700 font-medium">
+                <TrendingUp className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-700 font-medium">
                   No transaction data available yet.
                 </p>
-                <p className="text-sm text-gray-800 mt-1">
+                <p className="text-sm text-slate-800 mt-1">
                   Price history will appear after trades are completed in the
                   market.
                 </p>
@@ -560,40 +560,40 @@ export default function MerchantDashboard() {
             ) : (
               <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                  <table className="min-w-full divide-y divide-slate-200">
+                    <thead className="bg-slate-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Crop Type
                         </th>
-                        <th className="px-6 py-3 text-right text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Avg Price (₹/Qtl)
                         </th>
-                        <th className="px-6 py-3 text-right text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Min Price (₹/Qtl)
                         </th>
-                        <th className="px-6 py-3 text-right text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Max Price (₹/Qtl)
                         </th>
-                        <th className="px-6 py-3 text-right text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Total Trades
                         </th>
-                        <th className="px-6 py-3 text-center text-sm font-medium text-gray-900 font-bold uppercase tracking-wider">
+                        <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           Spread
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-slate-200">
                       {priceData.map((row) => {
                         const spread = (
                           Number(row.max_price) - Number(row.min_price)
                         ).toFixed(2);
                         return (
-                          <tr key={row.crop_type} className="hover:bg-gray-50">
+                          <tr key={row.crop_type} className="hover:bg-slate-50">
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-2">
                                 <Package className="h-4 w-4 text-green-500" />
-                                <span className="text-sm font-bold text-gray-900">
+                                <span className="text-sm font-semibold text-slate-900">
                                   {row.crop_type}
                                 </span>
                               </div>
@@ -614,7 +614,7 @@ export default function MerchantDashboard() {
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <span className="text-sm text-gray-800 font-medium">
+                              <span className="text-sm text-slate-800 font-medium">
                                 {row.total_trades}
                               </span>
                             </td>
@@ -631,7 +631,7 @@ export default function MerchantDashboard() {
                 </div>
 
                 {/* Summary footer */}
-                <div className="bg-gray-50 px-6 py-3 border-t text-sm text-gray-700">
+                <div className="bg-slate-50 px-6 py-3 border-t text-sm text-slate-700">
                   Showing price data across{" "}
                   <strong>
                     {priceData.reduce(
