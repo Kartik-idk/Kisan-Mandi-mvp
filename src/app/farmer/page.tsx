@@ -401,7 +401,7 @@ export default function FarmerDashboard() {
                 </p>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Issue Type</label>
                 <select 
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-xl shadow-sm p-3 border focus:ring-red-500 focus:border-red-500"
+                  className={`w-full bg-white border border-slate-300 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500 ${!disputeType ? "text-slate-500" : "text-slate-900"}`}
                   value={disputeType}
                   onChange={(e) => setDisputeType(e.target.value)}
                 >
@@ -418,7 +418,7 @@ export default function FarmerDashboard() {
                   required
                   rows={3}
                   placeholder="Explain the issue..."
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-xl shadow-sm p-3 border focus:ring-red-500 focus:border-red-500"
+                  className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-red-500 focus:border-red-500"
                   value={disputeDescription}
                   onChange={(e) => setDisputeDescription(e.target.value)}
                 />

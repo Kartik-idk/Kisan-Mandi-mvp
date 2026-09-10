@@ -232,7 +232,7 @@ function TraceabilityInspector() {
       <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
         <label className="block text-sm font-semibold text-slate-700 mb-2">Select Lot from Recent Records</label>
         <select 
-          className="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500"
+          className={`w-full bg-white border border-slate-300 text-sm font-medium rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${!selectedLotId ? "text-slate-500" : "text-slate-900"}`}
           value={selectedLotId}
           onChange={(e) => setSelectedLotId(e.target.value)}
         >
@@ -1156,7 +1156,7 @@ export default function ManagerDashboard() {
             <textarea
               rows={3}
               placeholder="Explain how this was resolved..."
-              className="w-full border-slate-300 rounded-lg shadow-sm p-3 border focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
+              className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg shadow-sm p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
               value={resolutionText}
               onChange={(e) => setResolutionText(e.target.value)}
               autoFocus

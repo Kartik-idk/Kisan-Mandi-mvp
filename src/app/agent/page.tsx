@@ -255,7 +255,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Buyer (Merchant)</label>
                 <select 
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
+                  className={`w-full bg-white border border-slate-300 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${!selectedMerchant ? "text-slate-500" : "text-slate-900"}`}
                   value={selectedMerchant}
                   onChange={(e) => setSelectedMerchant(e.target.value)}
                 >
@@ -270,7 +270,7 @@ export default function AgentDashboard() {
                 <input 
                   type="number" 
                   required
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
+                  className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={pricePerQuintal}
                   onChange={(e) => setPricePerQuintal(e.target.value)}
                 />
@@ -280,7 +280,7 @@ export default function AgentDashboard() {
                 <input 
                   type="number" 
                   required
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500"
+                  className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={deductions}
                   onChange={(e) => setDeductions(e.target.value)}
                 />
@@ -334,7 +334,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Select Palledar</label>
                 <select 
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
+                  className={`w-full bg-white border border-slate-300 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ${!selectedPalledar ? "text-slate-500" : "text-slate-900"}`}
                   value={selectedPalledar}
                   onChange={(e) => setSelectedPalledar(e.target.value)}
                   required
@@ -348,7 +348,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Task Type</label>
                 <select 
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
+                  className={`w-full bg-white border border-slate-300 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ${!taskType ? "text-slate-500" : "text-slate-900"}`}
                   value={taskType}
                   onChange={(e) => setTaskType(e.target.value)}
                 >
@@ -363,7 +363,7 @@ export default function AgentDashboard() {
                 <input 
                   type="number" 
                   required
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-emerald-500"
+                  className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   value={taskPayment}
                   onChange={(e) => setTaskPayment(e.target.value)}
                 />
@@ -419,7 +419,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Select Farmer</label>
                 <select 
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className={`w-full bg-white border border-slate-300 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${!farmerId ? "text-slate-500" : "text-slate-900"}`}
                   value={farmerId}
                   onChange={(e) => setFarmerId(e.target.value)}
                   required
@@ -434,7 +434,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Crop Type</label>
                 <select 
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className={`w-full bg-white border border-slate-300 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${!cropType ? "text-slate-500" : "text-slate-900"}`}
                   value={cropType}
                   onChange={(e) => setCropType(e.target.value)}
                 >
@@ -450,7 +450,7 @@ export default function AgentDashboard() {
                 <input 
                   type="number"
                   placeholder="e.g. 500"
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
                   required
@@ -460,7 +460,7 @@ export default function AgentDashboard() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Quality Grade</label>
                 <select 
-                  className="w-full border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg shadow-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  className={`w-full bg-white border border-slate-300 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${!quality ? "text-slate-500" : "text-slate-900"}`}
                   value={quality}
                   onChange={(e) => setQuality(e.target.value)}
                 >

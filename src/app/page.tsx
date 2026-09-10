@@ -139,7 +139,7 @@ export default function AuthPage() {
                       <input
                         type="text"
                         required
-                        className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg py-2 border"
+                        className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg py-2"
                         placeholder="e.g. Ramesh Kumar"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -154,7 +154,7 @@ export default function AuthPage() {
                         <Briefcase className="h-5 w-5 text-slate-800" />
                       </div>
                       <select
-                        className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg py-2 border"
+                        className={`focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm bg-white border border-slate-300 text-sm font-medium rounded-lg py-2 ${!role ? "text-slate-500" : "text-slate-900"}`}
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
                       >
@@ -177,7 +177,7 @@ export default function AuthPage() {
                   <input
                     type="tel"
                     required
-                    className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm border-slate-400 text-slate-900 placeholder-slate-400 rounded-lg py-2 border"
+                    className="focus:ring-green-500 focus:border-green-500 block w-full pl-10 sm:text-sm bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg py-2"
                     placeholder="9876543210"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
