@@ -61,7 +61,7 @@ export default function PalledarDashboard() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"tasks" | "earnings" | "profile" | "market">("tasks");
-  const [lang, setLang] = useState<"EN" | "HI">("EN");
+  const [lang, setLang] = useState<"EN" | "HI" | "KN">("EN");
 
   const t = {
     EN: {
@@ -125,7 +125,38 @@ export default function PalledarDashboard() {
       PENDING: "बाकी है",
       IN_PROGRESS: "चल रहा है",
       COMPLETED: "पूरा हो गया"
+    },
+    KN: {
+      myTasks: "ನನ್ನ ಕಾರ್ಯಗಳು",
+      tasksDesc: "ನಿಮ್ಮ ನಿಯೋಜಿತ ಕೆಲಸವನ್ನು ನಿರ್ವಹಿಸಿ",
+      activeTasks: "ಸಕ್ರಿಯ ಕಾರ್ಯಗಳು",
+      completedTasks: "ಪೂರ್ಣಗೊಂಡ ಕಾರ್ಯಗಳು",
+      startTask: "ಕಾರ್ಯವನ್ನು ಪ್ರಾರಂಭಿಸಿ",
+      completeTask: "ಕಾರ್ಯವನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ",
+      noTasksTitle: "ಯಾವುದೇ ಸಕ್ರಿಯ ಕಾರ್ಯಗಳಿಲ್ಲ",
+      noTasksDesc: "ನೀವು ಪ್ರಸ್ತುತ ಯಾವುದೇ ಬಾಕಿ ಉಳಿದಿರುವ ಅಥವಾ ಪ್ರಗತಿಯಲ್ಲಿರುವ ಕಾರ್ಯಗಳನ್ನು ಹೊಂದಿಲ್ಲ.",
+      earningsTitle: "ನನ್ನ ಸಂಪಾದನೆಗಳು",
+      earningsDesc: "ನಿಮ್ಮ ಆದಾಯ ಮತ್ತು ಪಾವತಿಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
+      totalEarned: "ಒಟ್ಟು ಗಳಿಕೆ",
+      pendingPay: "ಬಾಕಿ",
+      paid: "ಪಾವತಿಸಲಾಗಿದೆ",
+      paymentHistory: "ಪಾವತಿ ಇತಿಹಾಸ",
+      profile: "ಪ್ರೊಫೈಲ್",
+      tasksDone: "ಪೂರ್ಣಗೊಂಡ ಕಾರ್ಯಗಳು",
+      signOut: "ಸೈನ್ ಔಟ್",
+      tabTasks: "ಕಾರ್ಯಗಳು",
+      tabMarket: "ಮಾರುಕಟ್ಟೆ",
+      tabEarnings: "ಸಂಪಾದನೆಗಳು",
+      tabProfile: "ಪ್ರೊಫೈಲ್",
+      LOADING: "ಲೋಡಿಂಗ್",
+      UNLOADING: "ಅನ್ಲೋಡಿಂಗ್",
+      SORTING: "ವಿಂಗಡಣೆ",
+      WEIGHING: "ತೂಕ",
+      PENDING: "ಬಾಕಿ ಉಳಿದಿದೆ",
+      IN_PROGRESS: "ಪ್ರಗತಿಯಲ್ಲಿದೆ",
+      COMPLETED: "ಪೂರ್ಣಗೊಂಡಿದೆ"
     }
+
   };
 
   const [toast, setToast] = useState<{msg: string, type: "success"|"error"} | null>(null);
@@ -244,10 +275,10 @@ export default function PalledarDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <button 
-              onClick={() => setLang(lang === "EN" ? "HI" : "EN")}
+              onClick={() => setLang(lang === "EN" ? "HI" : lang === "HI" ? "KN" : "EN")}
               className="text-sm bg-emerald-800 hover:bg-emerald-900 px-2 py-1 rounded border border-emerald-500 transition"
             >
-              {lang === "EN" ? "हिंदी" : "English"}
+              {lang === "EN" ? "हिंदी" : lang === "HI" ? "ಕನ್ನಡ" : "English"}
             </button>
             <div className="text-sm bg-emerald-700 px-4 py-2 rounded-md font-bold shadow-sm hover:shadow-full border border-emerald-500">
               {user.name}

@@ -13,7 +13,7 @@ export default function FarmerDashboard() {
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"lots" | "receipts" | "market" | "profile">("lots");
-  const [lang, setLang] = useState<"EN" | "HI">("EN");
+  const [lang, setLang] = useState<"EN" | "HI" | "KN">("EN");
   const [toast, setToast] = useState<{msg: string, type: "success"|"error"} | null>(null);
 
   // Dispute state
@@ -81,7 +81,37 @@ export default function FarmerDashboard() {
       reportIssue: "समस्या दर्ज करें (वजन/गुणवत्ता)",
       disputeSuccess: "विवाद सफलतापूर्वक दर्ज किया गया। मंडी प्रबंधक जांच करेंगे।",
       disputeError: "विवाद दर्ज करने में विफल: "
+    },
+    KN: {
+      myLots: "ನನ್ನ ಬೆಳೆ ಲಾಟ್‌ಗಳು",
+      lotsDesc: "ನೈಜ ಸಮಯದಲ್ಲಿ ನಿಮ್ಮ ದಾಸ್ತಾನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ",
+      total: "ಒಟ್ಟು",
+      noLotsTitle: "ಇನ್ನೂ ಯಾವುದೇ ಲಾಟ್‌ಗಳನ್ನು ನೋಂದಾಯಿಸಿಲ್ಲ.",
+      noLotsDesc: "ನಿಮ್ಮ ಬೆಳೆಗಳನ್ನು ನೋಂದಾಯಿಸಲು ಕಮಿಷನ್ ಏಜೆಂಟ್ ಅನ್ನು ಭೇಟಿ ಮಾಡಿ.",
+      receiptsTitle: "ಡಿಜಿಟಲ್ ರಸೀದಿಗಳು",
+      receiptsDesc: "ನಿಮ್ಮ ಪಾವತಿ ಇತಿಹಾಸ ಮತ್ತು ಜೆ-ಫಾರ್ಮ್‌ಗಳು",
+      noReceiptsTitle: "ಇನ್ನೂ ಯಾವುದೇ ಅಂತಿಮ ರಸೀದಿಗಳಿಲ್ಲ",
+      noReceiptsDesc: "ನಿಮ್ಮ ಬೆಳೆ ಹರಾಜಾದ ನಂತರ ಮತ್ತು ವ್ಯಾಪಾರಿಯಿಂದ ಪಾವತಿ ಸ್ಪಷ್ಟವಾದ ನಂತರ, ನಿಮ್ಮ ಡಿಜಿಟಲ್ ರಸೀದಿ ಇಲ್ಲಿ ಸುರಕ್ಷಿತವಾಗಿ ಕಾಣಿಸುತ್ತದೆ.",
+      profile: "ನನ್ನ ಪ್ರೊಫೈಲ್",
+      signOut: "ಸೈನ್ ಔಟ್",
+      tabLots: "ನನ್ನ ಲಾಟ್‌ಗಳು",
+      tabMarket: "ಮಾರುಕಟ್ಟೆ",
+      tabReceipts: "ರಸೀದಿಗಳು",
+      tabProfile: "ಪ್ರೊಫೈಲ್",
+      agent: "ಏಜೆಂಟ್",
+      grade: "ಗ್ರೇಡ್",
+      arrived: "ತಲುಪಿದೆ",
+      weighed: "ತೂಕ ಮಾಡಲಾಗಿದೆ",
+      sold: "ಮಾರಾಟವಾಗಿದೆ",
+      receiptReady: "ಡಿಜಿಟಲ್ ರಸೀದಿ ಸಿದ್ಧವಾಗಿದೆ",
+      raiseDispute: "ವಿವಾದವನ್ನು ಎತ್ತಿ",
+      viewReceipt: "ರಸೀದಿ ವೀಕ್ಷಿಸಿ",
+      pendingAuction: "ನಿಮ್ಮ ಲಾಟ್ ಪ್ರಸ್ತುತ ಹರಾಜಿಗೆ ಬಾಕಿ ಇದೆ. ಅದು ಮಾರಾಟವಾದ ನಂತರ ನೀವು ಡಿಜಿಟಲ್ ರಸೀದಿಯನ್ನು ಸ್ವೀಕರಿಸುತ್ತೀರಿ.",
+      reportIssue: "ಸಮಸ್ಯೆಯನ್ನು ವರದಿ ಮಾಡಿ (ತೂಕ/ಗುಣಮಟ್ಟ)",
+      disputeSuccess: "ವಿವಾದವನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಎತ್ತಲಾಗಿದೆ. ಮಂಡಿ ವ್ಯವಸ್ಥಾಪಕರು ತನಿಖೆ ನಡೆಸುತ್ತಾರೆ.",
+      disputeError: "ವಿವಾದವನ್ನು ಎತ್ತುವಲ್ಲಿ ವಿಫಲವಾಗಿದೆ: "
     }
+
   };
 
   useEffect(() => {
@@ -187,10 +217,10 @@ export default function FarmerDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <button 
-              onClick={() => setLang(lang === "EN" ? "HI" : "EN")}
+              onClick={() => setLang(lang === "EN" ? "HI" : lang === "HI" ? "KN" : "EN")}
               className="text-sm bg-green-800 hover:bg-green-900 px-2 py-1 rounded border border-green-500 transition"
             >
-              {lang === "EN" ? "हिंदी" : "English"}
+              {lang === "EN" ? "हिंदी" : lang === "HI" ? "ಕನ್ನಡ" : "English"}
             </button>
             <div className="text-sm bg-green-700 px-4 py-2 rounded-md font-bold shadow-sm hover:shadow-full border border-green-500">
               {farmer.name}

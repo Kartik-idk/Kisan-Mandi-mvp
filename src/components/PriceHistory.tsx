@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { TrendingUp, Package } from "lucide-react";
 
-export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" }) {
+export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN" }) {
   const [priceData, setPriceData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,6 +66,17 @@ export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" }) {
       max: "अधिकतम",
       trades: "व्यापार",
       spread: "अंतर"
+    },
+    KN: {
+      title: "ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ಪ್ರವೃತ್ತಿಗಳು",
+      desc: "ಮಂಡಿಯಾದ್ಯಂತ ನೇರ ಸರಾಸರಿ, ಕನಿಷ್ಠ ಮತ್ತು ಗರಿಷ್ಠ ವ್ಯಾಪಾರ ಬೆಲೆಗಳು.",
+      noData: "ಯಾವುದೇ ವಹಿವಾಟು ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ.",
+      crop: "ಬೆಳೆ",
+      avg: "ಸರಾಸರಿ ಬೆಲೆ",
+      min: "ಕನಿಷ್ಠ",
+      max: "ಗರಿಷ್ಠ",
+      trades: "ವಹಿವಾಟು",
+      spread: "ವ್ಯತ್ಯಾಸ"
     }
   }[lang];
 
