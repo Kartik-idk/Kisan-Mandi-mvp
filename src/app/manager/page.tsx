@@ -153,15 +153,17 @@ function TraceabilityInspector() {
   const [lots, setLots] = useState<any[]>([]);
   const [selectedLotId, setSelectedLotId] = useState<string>("");
   const [lotData, setLotData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   
   useEffect(() => {
-    supabase.from("lots").select("id, crop_type, weight_kg, status, created_at, users!lots_farmer_id_fkey(name)").order("created_at", { ascending: false }).limit(50)
+    supabase.from("lots").select("*").order("created_at", { ascending: false }).limit(50)
       .then(({data, error}) => {
         if (data && data.length > 0) {
           setLots(data);
           setSelectedLotId(data[0].id);
         } else {
           setLots([]);
+          setIsLoading(false);
         }
       });
   }, []);
@@ -170,21 +172,58 @@ function TraceabilityInspector() {
     if (!selectedLotId) return;
     
     async function fetchFullLot() {
-      const { data: lot } = await supabase.from("lots").select("*, farmer:users!lots_farmer_id_fkey(name), agent:users!lots_agent_id_fkey(name)").eq("id", selectedLotId).maybeSingle();
-      const { data: tx } = await supabase.from("transactions").select("*, merchant:users!transactions_merchant_id_fkey(name)").eq("lot_id", selectedLotId).maybeSingle();
-      const { data: tasks } = await supabase.from("work_tasks").select("*, palledar:users!work_tasks_palledar_id_fkey(name)").eq("lot_id", selectedLotId);
+      setIsLoading(true);
       
-      if (lot) {
-        setLotData({ lot, tx, tasks: tasks || [] });
-      } else {
-        setLotData({ lot: null, tx: null, tasks: [] });
+      const { data: lot, error: lotError } = await supabase.from("lots").select("*").eq("id", selectedLotId).maybeSingle();
+      
+      if (!lot) {
+        setLotData(null);
+        setIsLoading(false);
+        return;
       }
+
+      let farmerName = 'Not recorded yet';
+      let agentName = 'Not recorded yet';
+      
+      if (lot.farmer_id) {
+        const { data: f } = await supabase.from("users").select("name").eq("id", lot.farmer_id).maybeSingle();
+        if (f) farmerName = f.name;
+      }
+      if (lot.agent_id) {
+        const { data: a } = await supabase.from("users").select("name").eq("id", lot.agent_id).maybeSingle();
+        if (a) agentName = a.name;
+      }
+
+      lot.farmer = { name: farmerName };
+      lot.agent = { name: agentName };
+
+      const { data: tx } = await supabase.from("transactions").select("*").eq("lot_id", selectedLotId).maybeSingle();
+      if (tx && tx.merchant_id) {
+        const { data: m } = await supabase.from("users").select("name").eq("id", tx.merchant_id).maybeSingle();
+        tx.merchant = { name: m ? m.name : 'Not recorded yet' };
+      }
+
+      const { data: rawTasks } = await supabase.from("work_tasks").select("*").eq("lot_id", selectedLotId);
+      const tasks = rawTasks || [];
+      
+      for (let t of tasks) {
+        t.palledar = { name: 'Not recorded yet' };
+        if (t.palledar_id) {
+          const { data: p } = await supabase.from("users").select("name").eq("id", t.palledar_id).maybeSingle();
+          if (p) t.palledar.name = p.name;
+        }
+      }
+      
+      setLotData({ lot, tx, tasks });
+      setIsLoading(false);
     }
+    
     fetchFullLot();
   }, [selectedLotId]);
   
-  if (lots.length === 0) return <div className="p-8 text-center">No lots found in the database.</div>;
-  if (!lotData || !lotData.lot) return <div className="p-8 text-center">Loading Traceability...</div>;
+  if (lots.length === 0 && !isLoading) return <div className="p-8 text-center text-slate-500">No lots found in the database.</div>;
+  if (isLoading || !lotData || !lotData.lot) return <div className="p-8 text-center text-slate-500">Loading Traceability...</div>;
+  
   const { lot, tx, tasks } = lotData;
 
   return (
@@ -197,7 +236,7 @@ function TraceabilityInspector() {
           onChange={(e) => setSelectedLotId(e.target.value)}
         >
           {lots.map(l => (
-            <option key={l.id} value={l.id}>{formatLotId(l.id)} - {l.crop_type} ({l.weight_kg}kg) - {l.status}</option>
+            <option key={l.id} value={l.id}>{formatLotId(l.id)} - {l.crop_type} ({(l.weight_kg || 0).toLocaleString()}kg) - {l.status}</option>
           ))}
         </select>
       </div>
@@ -206,12 +245,12 @@ function TraceabilityInspector() {
         <div className="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
           <div>
             <div className="text-sm text-slate-500 mb-1">{formatLotId(lot.id)}</div>
-            <h2 className="text-2xl font-bold text-slate-900">{lot.crop_type} <span className="text-lg font-normal text-slate-600">({lot.weight_kg} kg)</span></h2>
-            <div className="text-sm font-medium text-slate-700 mt-2">Grade: {lot.quality_grade || 'N/A'}</div>
+            <h2 className="text-2xl font-bold text-slate-900">{lot.crop_type || 'Unknown Crop'} <span className="text-lg font-normal text-slate-600">({(lot.weight_kg || 0).toLocaleString()} kg)</span></h2>
+            <div className="text-sm font-medium text-slate-700 mt-2">Grade: {lot.quality_grade || 'Not recorded yet'}</div>
           </div>
           <div className="text-right">
             <span className="inline-block bg-blue-50 text-blue-800 border border-blue-200 px-3 py-1 rounded-full text-sm font-semibold">
-              Current State: {lot.status}
+              Current State: {lot.status || 'UNKNOWN'}
             </span>
           </div>
         </div>
@@ -224,19 +263,19 @@ function TraceabilityInspector() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
             <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Source (Farmer)</div>
-            <div className="font-semibold text-slate-900">{lot.farmer?.name || 'Unknown'}</div>
+            <div className="font-semibold text-slate-900">{lot.farmer?.name || 'Not recorded yet'}</div>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
             <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Mandi Agent</div>
-            <div className="font-semibold text-slate-900">{lot.agent?.name || 'Unassigned'}</div>
+            <div className="font-semibold text-slate-900">{lot.agent?.name || 'Not recorded yet'}</div>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
             <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Buyer (Merchant)</div>
-            <div className="font-semibold text-slate-900">{tx?.merchant?.name || 'Pending Auction'}</div>
+            <div className="font-semibold text-slate-900">{tx?.merchant?.name || 'Not recorded yet'}</div>
           </div>
           <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
             <div className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-1">Settlement</div>
-            <div className="font-semibold text-slate-900">{tx ? `₹${tx.total_amount}` : 'N/A'}</div>
+            <div className="font-semibold text-slate-900">{tx ? `₹${(tx.total_amount || 0).toLocaleString()}` : 'Not recorded yet'}</div>
             <div className="text-xs mt-1 text-slate-600">{tx?.payment_status || ''}</div>
           </div>
         </div>
@@ -248,11 +287,11 @@ function TraceabilityInspector() {
               {tasks.map((t: any) => (
                 <div key={t.id} className="flex justify-between items-center p-3 border border-slate-200 rounded-lg">
                   <div>
-                    <div className="font-semibold text-slate-800 text-sm">{t.task_type}</div>
-                    <div className="text-xs text-slate-500">{t.palledar?.name}</div>
+                    <div className="font-semibold text-slate-800 text-sm">{t.task_type || 'Unknown Task'}</div>
+                    <div className="text-xs text-slate-500">{t.palledar?.name || 'Not recorded yet'}</div>
                   </div>
                   <div className="text-right text-sm">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${t.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{t.status}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${t.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{t.status || 'UNKNOWN'}</span>
                   </div>
                 </div>
               ))}
@@ -263,7 +302,6 @@ function TraceabilityInspector() {
     </div>
   );
 }
-
 export default function ManagerDashboard() {
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [loading, setLoading] = useState(true);
@@ -1003,6 +1041,19 @@ export default function ManagerDashboard() {
             )}
 
             {/* ════════════════════ TAB 4: INFRASTRUCTURE ═════════════════════ */}
+            
+            {/* ════════════════════ TAB: TRACEABILITY ═════════════════════ */}
+            {activeTab === "traceability" && (
+              <div className="animate-in fade-in duration-300">
+                <div className="mb-6">
+                  <h1 className="text-2xl font-bold text-slate-800">Lot Traceability Inspector</h1>
+                  <p className="text-slate-700">Select any lot from the active or historical database to view its full provenance.</p>
+                </div>
+                
+                <TraceabilityInspector />
+              </div>
+            )}
+
             {/* ── Market Trends Tab ────────────────────────────────────────── */}
             {activeTab === "market" && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
