@@ -79,6 +79,76 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
 // ─── Component ───────────────────────────────────────────────────────────────
 
 
+
+
+import { getMspForCrop } from "@/lib/constants";
+
+function SmartMarketInsight() {
+  const [insight, setInsight] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchInsight() {
+      const { data: allTxData } = await supabase.from("transactions").select("*, lots(crop_type, weight_kg)");
+      if (allTxData && allTxData.length > 0) {
+        // Group by crop
+        const grouped: Record<string, { prices: number[]; crop_type: string, count: number }> = {};
+        allTxData.forEach((tx: any) => {
+          const crop = tx.lots?.crop_type;
+          if (!crop) return;
+          if (!grouped[crop]) {
+            grouped[crop] = { prices: [], crop_type: crop, count: 0 };
+          }
+          grouped[crop].prices.push(Number(tx.price_per_quintal));
+          grouped[crop].count++;
+        });
+
+        // Find most traded crop
+        let topCrop = Object.values(grouped).sort((a, b) => b.count - a.count)[0];
+        if (topCrop) {
+          const avg = topCrop.prices.reduce((a, b) => a + b, 0) / topCrop.prices.length;
+          const msp = getMspForCrop(topCrop.crop_type);
+          if (msp) {
+            setInsight({
+              crop: topCrop.crop_type,
+              avg: avg.toFixed(2),
+              msp,
+              diff: (avg - msp).toFixed(2),
+              isAbove: avg >= msp
+            });
+          }
+        }
+      }
+    }
+    fetchInsight();
+  }, []);
+
+  if (!insight) return null;
+
+  return (
+    <div className="bg-slate-900 rounded-xl shadow-lg border border-slate-700 p-6 mb-8 text-white relative overflow-hidden">
+      <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
+      <h3 className="text-sm font-bold tracking-wider text-indigo-400 uppercase mb-4 flex items-center gap-2">
+        <TrendingUp className="h-4 w-4" /> Rule-Based Smart Market Insight
+      </h3>
+      <p className="text-slate-200 leading-relaxed mb-4">
+        Current <strong className="text-white">{insight.crop}</strong> mandi price is <strong className="text-white">₹{insight.avg}/qtl</strong> compared with government MSP reference <strong className="text-white">₹{insight.msp}/qtl</strong>.
+      </p>
+      <div className="flex gap-4 items-center border-t border-slate-700 pt-4">
+        <div>
+          <div className="text-xs text-slate-400 uppercase tracking-wide mb-1">Market Position</div>
+          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${insight.isAbove ? 'bg-emerald-900 text-emerald-300' : 'bg-red-900 text-red-300'}`}>
+            {insight.isAbove ? 'Above MSP' : 'Below MSP'}
+          </span>
+        </div>
+        <div className="border-l border-slate-700 pl-4">
+          <div className="text-xs text-slate-400 uppercase tracking-wide mb-1">Basis</div>
+          <div className="text-sm font-medium text-slate-300">Current mandi price vs MSP reference</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function TraceabilityInspector() {
   const [lots, setLots] = useState<any[]>([]);
   const [selectedLotId, setSelectedLotId] = useState<string>("");
@@ -86,10 +156,12 @@ function TraceabilityInspector() {
   
   useEffect(() => {
     supabase.from("lots").select("id, crop_type, weight_kg, status, created_at, users!lots_farmer_id_fkey(name)").order("created_at", { ascending: false }).limit(50)
-      .then(({data}) => {
-        if (data) {
+      .then(({data, error}) => {
+        if (data && data.length > 0) {
           setLots(data);
-          if (data.length > 0) setSelectedLotId(data[0].id);
+          setSelectedLotId(data[0].id);
+        } else {
+          setLots([]);
         }
       });
   }, []);
@@ -98,16 +170,21 @@ function TraceabilityInspector() {
     if (!selectedLotId) return;
     
     async function fetchFullLot() {
-      const { data: lot } = await supabase.from("lots").select("*, farmer:users!lots_farmer_id_fkey(name), agent:users!lots_agent_id_fkey(name)").eq("id", selectedLotId).single();
-      const { data: tx } = await supabase.from("transactions").select("*, merchant:users!transactions_merchant_id_fkey(name)").eq("lot_id", selectedLotId).single();
+      const { data: lot } = await supabase.from("lots").select("*, farmer:users!lots_farmer_id_fkey(name), agent:users!lots_agent_id_fkey(name)").eq("id", selectedLotId).maybeSingle();
+      const { data: tx } = await supabase.from("transactions").select("*, merchant:users!transactions_merchant_id_fkey(name)").eq("lot_id", selectedLotId).maybeSingle();
       const { data: tasks } = await supabase.from("work_tasks").select("*, palledar:users!work_tasks_palledar_id_fkey(name)").eq("lot_id", selectedLotId);
       
-      setLotData({ lot, tx, tasks: tasks || [] });
+      if (lot) {
+        setLotData({ lot, tx, tasks: tasks || [] });
+      } else {
+        setLotData({ lot: null, tx: null, tasks: [] });
+      }
     }
     fetchFullLot();
   }, [selectedLotId]);
   
-  if (!lotData) return <div className="p-8 text-center">Loading Traceability...</div>;
+  if (lots.length === 0) return <div className="p-8 text-center">No lots found in the database.</div>;
+  if (!lotData || !lotData.lot) return <div className="p-8 text-center">Loading Traceability...</div>;
   const { lot, tx, tasks } = lotData;
 
   return (
@@ -120,7 +197,7 @@ function TraceabilityInspector() {
           onChange={(e) => setSelectedLotId(e.target.value)}
         >
           {lots.map(l => (
-            <option key={l.id} value={l.id}>{formatLotId(l.id)} - {l.crop_type} ({l.weight_kg}kg) - {l.users?.name} - {l.status}</option>
+            <option key={l.id} value={l.id}>{formatLotId(l.id)} - {l.crop_type} ({l.weight_kg}kg) - {l.status}</option>
           ))}
         </select>
       </div>
@@ -564,6 +641,8 @@ export default function ManagerDashboard() {
                   ))}
                 </div>
 
+                <SmartMarketInsight />
+
                 {/* Charts */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Line Chart — Traffic & Arrival Trend */}
@@ -746,7 +825,7 @@ export default function ManagerDashboard() {
                                   : "—"}
                               </td>
                               <td className="px-4 py-3 text-right font-semibold text-emerald-800">
-                                {formatCurrency(tx.net_payable)}
+                                {formatCurrency(tx.total_amount - (tx.deductions || 0))}
                               </td>
                               <td className="px-4 py-3 text-center">
                                 <span
