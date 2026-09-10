@@ -257,7 +257,7 @@ function TraceabilityInspector() {
 
         <div className="mb-8">
           <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Lifecycle Timeline</h3>
-          <LotTimeline status={lot.status} dispatchStatus={lot.dispatch_status} />
+          <LotTimeline status={lot.status} dispatchStatus={lot.dispatch_status} paymentStatus={tx?.payment_status} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

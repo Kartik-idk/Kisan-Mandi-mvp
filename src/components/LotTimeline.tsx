@@ -1,13 +1,19 @@
 import React from 'react';
 
-const STAGES = [
-  { id: 'ARRIVED', label: 'Arrived' },
-  { id: 'WEIGHED', label: 'Weighed & Assessed' },
-  { id: 'AUCTIONED', label: 'Auctioned & Settled' },
-  { id: 'DISPATCHED', label: 'Dispatched' }
-];
+export default function LotTimeline({ status, dispatchStatus, paymentStatus }: { status: string, dispatchStatus?: string | null, paymentStatus?: string | null }) {
+  const getAuctionedLabel = () => {
+    if (paymentStatus === 'PENDING') return 'Auctioned (Pending Payment)';
+    if (paymentStatus === 'CLEARED' || paymentStatus === 'PAID' || paymentStatus === 'SETTLED') return 'Auctioned & Settled';
+    return 'Auctioned';
+  };
 
-export default function LotTimeline({ status, dispatchStatus }: { status: string, dispatchStatus?: string | null }) {
+  const STAGES = [
+    { id: 'ARRIVED', label: 'Arrived' },
+    { id: 'WEIGHED', label: 'Weighed & Assessed' },
+    { id: 'AUCTIONED', label: getAuctionedLabel() },
+    { id: 'DISPATCHED', label: 'Dispatched' }
+  ];
+
   // Determine current index based on status mapping
   let currentIndex = 0;
   if (status === 'WEIGHED') currentIndex = 1;
