@@ -223,9 +223,6 @@ export default function PalledarDashboard() {
     setCompleteModal(null);
 
     const updatePayload: any = { status: newStatus };
-    if (newStatus === "COMPLETED") {
-      updatePayload.completed_at = new Date().toISOString();
-    }
     const { error } = await supabase.from("work_tasks").update(updatePayload).eq("id", taskId);
 
     if (!error) {
