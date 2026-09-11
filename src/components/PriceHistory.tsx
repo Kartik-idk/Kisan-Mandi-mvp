@@ -22,8 +22,9 @@ export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN
     if (allTxData) {
       const grouped: Record<string, { prices: number[]; crop_type: string }> = {};
       allTxData.forEach((tx: any) => {
-        const crop = tx.lots?.crop_type;
+        let crop = tx.lots?.crop_type;
         if (!crop) return;
+        if (crop === "Rice (Basmati)") crop = "Rice";
         if (!grouped[crop]) {
           grouped[crop] = { prices: [], crop_type: crop };
         }

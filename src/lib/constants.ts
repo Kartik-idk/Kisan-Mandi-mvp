@@ -4,7 +4,7 @@
 export const MSP_BENCHMARKS: Record<string, number> = {
   "Wheat": 2275,
   "Soybean": 4892,
-  "Rice (Basmati)": 2320,
+  "Rice": 2320,
   "Maize": 2090,
   "Mustard": 5650,
   "Cotton": 7121
