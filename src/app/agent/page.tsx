@@ -60,7 +60,7 @@ export default function AgentDashboard() {
     // Get lots
     const { data: lotsData } = await supabase
       .from("lots")
-      .select("*, users!lots_farmer_id_fkey(name, phone_number)")
+      .select("*, users!lots_farmer_id_fkey(name, phone_number), transactions(id, merchant_id, users!transactions_merchant_id_fkey(name, phone_number))")
       .order("created_at", { ascending: false });
       
     if (lotsData) {
@@ -515,6 +515,7 @@ export default function AgentDashboard() {
                       <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Farmer</th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Crop</th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Grade</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Buyer</th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
                       <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
                     </tr>
@@ -530,6 +531,18 @@ export default function AgentDashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-semibold text-slate-700">{lot.quality_grade || 'N/A'}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {lot.transactions && lot.transactions.length > 0 ? (
+                            <div>
+                              <div className="text-sm font-semibold text-slate-900">{lot.transactions[0].users?.name || "Walk-in Buyer"}</div>
+                              {lot.transactions[0].users?.phone_number && (
+                                <div className="text-xs text-slate-500">{lot.transactions[0].users.phone_number}</div>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-slate-400 italic">Unsold</span>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${
