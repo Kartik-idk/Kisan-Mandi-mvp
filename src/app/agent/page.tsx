@@ -29,7 +29,7 @@ export default function AgentDashboard() {
     fetchData();
     const intervalId = setInterval(() => {
       fetchData(false);
-    }, 30000);
+    }, 5000);
     return () => clearInterval(intervalId);
   }, []);
 
