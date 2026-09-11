@@ -103,7 +103,21 @@ export default function MerchantDashboard() {
       .order('amount', { ascending: false })
       .limit(1);
     const currentHighest = currentBids && currentBids.length > 0 ? currentBids[0].amount : 0;
-    setBidAmount("");
+    
+    // Pre-fill if they already have a bid
+    const { data: myBid } = await supabase
+      .from('bids')
+      .select('amount')
+      .eq('lot_id', lot.id)
+      .eq('merchant_id', merchant?.id)
+      .limit(1);
+      
+    if (myBid && myBid.length > 0) {
+      setBidAmount(myBid[0].amount.toString());
+    } else {
+      setBidAmount("");
+    }
+    
     setBidModal({ lot, currentHighest });
   };
 
@@ -128,12 +142,28 @@ export default function MerchantDashboard() {
       return;
     }
 
-    const { error } = await supabase.from('bids').insert({
-      lot_id: bidModal.lot.id,
-      merchant_id: merchant.id,
-      amount: amount,
-      status: 'PENDING'
-    });
+    // Check if bid exists
+    const { data: existingBid } = await supabase
+      .from('bids')
+      .select('id')
+      .eq('lot_id', bidModal.lot.id)
+      .eq('merchant_id', merchant.id)
+      .eq('status', 'PENDING')
+      .limit(1);
+
+    let error;
+    if (existingBid && existingBid.length > 0) {
+      const res = await supabase.from('bids').update({ amount: amount }).eq('id', existingBid[0].id);
+      error = res.error;
+    } else {
+      const res = await supabase.from('bids').insert({
+        lot_id: bidModal.lot.id,
+        merchant_id: merchant.id,
+        amount: amount,
+        status: 'PENDING'
+      });
+      error = res.error;
+    }
 
     if (error) {
       setToast({ msg: `Error placing bid`, type: "error" });
@@ -344,11 +374,10 @@ export default function MerchantDashboard() {
 
                       <button
                         onClick={() => handleOpenBidModal(lot)}
-                        disabled={biddedLots[lot.id]}
-                        className={`w-full py-2.5 px-4 rounded-lg transition font-semibold text-sm flex items-center justify-center gap-2 ${biddedLots[lot.id] ? "bg-slate-100 text-slate-800 cursor-not-allowed" : "bg-green-600 text-white hover:bg-green-700"}`}
+                        className={`w-full py-2.5 px-4 rounded-lg transition font-semibold text-sm flex items-center justify-center gap-2 ${biddedLots[lot.id] ? "bg-indigo-600 text-white hover:bg-indigo-700" : "bg-green-600 text-white hover:bg-green-700"}`}
                       >
                         <ShoppingCart className="h-4 w-4" />
-                        {biddedLots[lot.id] ? "Bid Placed" : "Place Bid"}
+                        {biddedLots[lot.id] ? "Update Bid" : "Place Bid"}
                       </button>
                     </div>
                   </div>
@@ -523,7 +552,7 @@ export default function MerchantDashboard() {
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden">
             <div className="bg-blue-600 p-4 text-white flex justify-between items-center">
-              <h3 className="font-bold">Place Bid for {bidModal.lot.crop_type}</h3>
+              <h3 className="font-bold">{biddedLots[bidModal.lot.id] ? "Update Bid" : "Place Bid"} for {bidModal.lot.crop_type}</h3>
               <button onClick={() => setBidModal(null)} className="text-white/80 hover:text-white">&times;</button>
             </div>
             <form onSubmit={submitBid} className="p-6 space-y-4">
@@ -568,7 +597,7 @@ export default function MerchantDashboard() {
               <div className="flex justify-end gap-3 pt-4">
                 <button type="button" onClick={() => setBidModal(null)} className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition">Cancel</button>
                 <button type="submit" disabled={submittingBid} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition disabled:opacity-70 disabled:cursor-not-allowed">
-                  {submittingBid ? "Submitting..." : "Submit Bid"}
+                  {submittingBid ? "Submitting..." : (biddedLots[bidModal.lot.id] ? "Update Bid" : "Submit Bid")}
                 </button>
               </div>
             </form>
