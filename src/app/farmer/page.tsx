@@ -120,7 +120,7 @@ export default function FarmerDashboard() {
     fetchData();
     const interval = setInterval(() => {
       fetchData(false);
-    }, 5000);
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 

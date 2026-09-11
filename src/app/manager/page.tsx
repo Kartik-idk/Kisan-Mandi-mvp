@@ -479,7 +479,7 @@ export default function ManagerDashboard() {
     else setLoading(false);
 
     // Polling interval
-    const intervalId = setInterval(fetchData, 3000);
+    const intervalId = setInterval(fetchData, 30000);
     return () => clearInterval(intervalId);
   }, [activeTab, fetchOverviewData, fetchTransactions, fetchDisputes]);
 

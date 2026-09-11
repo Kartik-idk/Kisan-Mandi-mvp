@@ -10,7 +10,7 @@ export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN
 
   useEffect(() => {
     fetchPriceData();
-    const interval = setInterval(() => fetchPriceData(), 10000);
+    const interval = setInterval(() => fetchPriceData(), 30000);
     return () => clearInterval(interval);
   }, []);
 
