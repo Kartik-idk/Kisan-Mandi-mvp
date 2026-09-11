@@ -232,7 +232,7 @@ export default function FarmerDashboard() {
       </nav>
 
       {/* Main Content Area based on Tab */}
-      <main className="px-4 py-6 max-w-lg mx-auto w-full flex-grow">
+      <main className="px-4 py-6 max-w-4xl mx-auto w-full flex-grow">
         
         {/* --- TAB: LOTS --- */}
         {activeTab === "lots" && (

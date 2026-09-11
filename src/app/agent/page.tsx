@@ -261,7 +261,16 @@ export default function AgentDashboard() {
                 <select 
                   className={`w-full bg-white border border-slate-300 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${!selectedMerchant ? "text-slate-500" : "text-slate-900"}`}
                   value={selectedMerchant}
-                  onChange={(e) => setSelectedMerchant(e.target.value)}
+                  onChange={(e) => {
+                    const mId = e.target.value;
+                    setSelectedMerchant(mId);
+                    const digitalBid = bids.find(b => b.lot_id === auctioningLot?.id && b.merchant_id === mId);
+                    if (digitalBid) {
+                      setPricePerQuintal(digitalBid.amount.toString());
+                    } else if (mId === "") {
+                      setPricePerQuintal("");
+                    }
+                  }}
                 >
                   <option value="">-- Walk-in Buyer --</option>
                   {merchants.map(m => (
@@ -274,7 +283,8 @@ export default function AgentDashboard() {
                 <input 
                   type="number" 
                   required
-                  className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  readOnly={bids.some(b => b.lot_id === auctioningLot?.id && b.merchant_id === selectedMerchant)}
+                  className={`w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${bids.some(b => b.lot_id === auctioningLot?.id && b.merchant_id === selectedMerchant) ? "bg-slate-100 cursor-not-allowed" : ""}`}
                   value={pricePerQuintal}
                   onChange={(e) => setPricePerQuintal(e.target.value)}
                 />

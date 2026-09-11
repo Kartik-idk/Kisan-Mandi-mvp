@@ -223,6 +223,9 @@ export default function PalledarDashboard() {
     setCompleteModal(null);
 
     const updatePayload: any = { status: newStatus };
+    if (newStatus === "COMPLETED") {
+      updatePayload.completed_at = new Date().toISOString();
+    }
     const { error } = await supabase.from("work_tasks").update(updatePayload).eq("id", taskId);
 
     if (!error) {
@@ -270,7 +273,7 @@ export default function PalledarDashboard() {
       </nav>
 
       {/* Main Content */}
-      <main className="px-4 py-6 max-w-lg mx-auto w-full flex-grow">
+      <main className="px-4 py-6 max-w-4xl mx-auto w-full flex-grow">
         {/* --- TAB: MY TASKS --- */}
         {activeTab === "tasks" && (
           <>
