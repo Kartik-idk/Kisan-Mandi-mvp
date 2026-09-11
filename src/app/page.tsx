@@ -110,7 +110,7 @@ export default function AuthPage() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen relative bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <Tractor className="mx-auto h-12 w-12 text-green-800" />
         <h2 className="mt-6 text-center text-3xl font-bold text-slate-900">
@@ -292,6 +292,13 @@ export default function AuthPage() {
             </div>
           )}
         </div>
+      </div>
+      
+      {/* Subtle Team Name Footer */}
+      <div className="absolute bottom-6 left-0 right-0 text-center pointer-events-none">
+        <span className="text-slate-400 text-xs tracking-wide font-medium">
+          Built by Team TechMinds
+        </span>
       </div>
     </div>
   );
