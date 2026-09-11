@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import LotTimeline from "@/components/LotTimeline";
 import { formatLotId } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
+import PriceHistory from "@/components/PriceHistory";
 import { Store, ShoppingCart, TrendingUp, Truck, Package, CheckCircle2 } from "lucide-react";
 import { Toast } from "@/components/Toast";
 
@@ -13,8 +14,7 @@ export default function MerchantDashboard() {
   const [merchant, setMerchant] = useState<any>(null);
   const [lots, setLots] = useState<any[]>([]);
   const [purchases, setPurchases] = useState<any[]>([]);
-  const [priceData, setPriceData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("supply");
 
   const [toast, setToast] = useState<{msg: string, type: "success"|"error"} | null>(null);
@@ -76,38 +76,7 @@ export default function MerchantDashboard() {
 
     if (txData) setPurchases(txData);
 
-    // Fetch ALL transactions for price history
-    const { data: allTxData } = await supabase
-      .from("transactions")
-      .select("*, lots(crop_type, weight_kg)");
-
-    if (allTxData) {
-      // Group by crop_type and calculate averages
-      const grouped: Record<
-        string,
-        { prices: number[]; crop_type: string }
-      > = {};
-      allTxData.forEach((tx: any) => {
-        const crop = tx.lots?.crop_type;
-        if (!crop) return;
-        if (!grouped[crop]) {
-          grouped[crop] = { prices: [], crop_type: crop };
-        }
-        grouped[crop].prices.push(Number(tx.price_per_quintal));
-      });
-
-      const summary = Object.values(grouped).map((g) => ({
-        crop_type: g.crop_type,
-        avg_price: (
-          g.prices.reduce((a, b) => a + b, 0) / g.prices.length
-        ).toFixed(2),
-        min_price: Math.min(...g.prices).toFixed(2),
-        max_price: Math.max(...g.prices).toFixed(2),
-        total_trades: g.prices.length,
-      }));
-
-      setPriceData(summary);
-    }
+    
 
     if (showLoading) setLoading(false);
   };
@@ -535,115 +504,8 @@ export default function MerchantDashboard() {
 
         {/* Tab 3: Price History */}
         {activeTab === "prices" && (
-          <div>
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-slate-900">
-                Price History
-              </h1>
-              <p className="text-slate-700 text-sm mt-1">
-                Market price analytics — compare rates across crops to make
-                informed purchasing decisions.
-              </p>
-            </div>
-
-            {priceData.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-xl shadow-sm border">
-                <TrendingUp className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-700 font-medium">
-                  No transaction data available yet.
-                </p>
-                <p className="text-sm text-slate-800 mt-1">
-                  Price history will appear after trades are completed in the
-                  market.
-                </p>
-              </div>
-            ) : (
-              <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-slate-200">
-                    <thead className="bg-slate-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          Crop Type
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          Avg Price (₹/Qtl)
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          Min Price (₹/Qtl)
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          Max Price (₹/Qtl)
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          Total Trades
-                        </th>
-                        <th className="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                          Spread
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-slate-200">
-                      {priceData.map((row) => {
-                        const spread = (
-                          Number(row.max_price) - Number(row.min_price)
-                        ).toFixed(2);
-                        return (
-                          <tr key={row.crop_type} className="hover:bg-slate-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center gap-2">
-                                <Package className="h-4 w-4 text-green-500" />
-                                <span className="text-sm font-semibold text-slate-900">
-                                  {row.crop_type}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <span className="text-sm font-bold text-blue-700">
-                                ₹{row.avg_price}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <span className="text-sm text-red-800 font-medium">
-                                ₹{row.min_price}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <span className="text-sm text-green-800 font-medium">
-                                ₹{row.max_price}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <span className="text-sm text-slate-800 font-medium">
-                                {row.total_trades}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <span className="px-2.5 py-1 text-sm font-semibold rounded-full bg-purple-100 text-purple-700">
-                                ₹{spread}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Summary footer */}
-                <div className="bg-slate-50 px-6 py-3 border-t text-sm text-slate-700">
-                  Showing price data across{" "}
-                  <strong>
-                    {priceData.reduce(
-                      (sum, r) => sum + r.total_trades,
-                      0
-                    )}
-                  </strong>{" "}
-                  total transactions for{" "}
-                  <strong>{priceData.length}</strong> crop types.
-                </div>
-              </div>
-            )}
+          <div className="mt-2">
+            <PriceHistory lang="EN" />
           </div>
         )}
       </main>
