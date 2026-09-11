@@ -435,7 +435,7 @@ export default function MerchantDashboard() {
                       {purchases.map((tx) => {
                         const lot = tx.lots;
                         const dispatchStatus =
-                          lot?.dispatch_status || "PENDING";
+                          lot?.status === "DISPATCHED" ? "DISPATCHED" : (lot?.dispatch_status || "PENDING");
                         return (
                           <tr key={tx.id} className="hover:bg-slate-50">
                             <td className="px-6 py-4 whitespace-nowrap">

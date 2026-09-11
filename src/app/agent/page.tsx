@@ -123,9 +123,13 @@ export default function AgentDashboard() {
   const [taskPayment, setTaskPayment] = useState("200");
 
   const updateLotStatus = async (lotId: string, newStatus: string) => {
+    const updatePayload: any = { status: newStatus };
+    if (newStatus === "DISPATCHED") {
+      updatePayload.dispatch_status = "DISPATCHED";
+    }
     const { error } = await supabase
       .from("lots")
-      .update({ status: newStatus })
+      .update(updatePayload)
       .eq("id", lotId);
       
     if (!error) {
