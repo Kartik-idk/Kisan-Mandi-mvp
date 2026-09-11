@@ -119,22 +119,6 @@ export default function MerchantDashboard() {
 
     setSubmittingBid(true);
 
-    // Re-verify highest bid right before inserting (prevents TOCTOU race condition in UI)
-    const { data: currentBids } = await supabase
-      .from('bids')
-      .select('amount')
-      .eq('lot_id', bidModal.lot.id)
-      .order('amount', { ascending: false })
-      .limit(1);
-    const actualHighest = currentBids && currentBids.length > 0 ? currentBids[0].amount : 0;
-
-    if (amount <= actualHighest) {
-      setToast({ msg: `Bid must be higher than current highest bid (₹${actualHighest})`, type: "error" });
-      setBidModal({ ...bidModal, currentHighest: actualHighest }); // Update modal with new highest
-      setSubmittingBid(false);
-      return;
-    }
-
     // Ensure Lot is still available
     const { data: checkLot } = await supabase.from('lots').select('status').eq('id', bidModal.lot.id).single();
     if (checkLot?.status !== 'WEIGHED') {
@@ -573,12 +557,12 @@ export default function MerchantDashboard() {
                 <label className="block text-sm font-medium text-slate-700 mb-1">Your Bid Amount (₹/Qtl)</label>
                 <input
                   type="number"
-                  min={bidModal.currentHighest + 1}
+                  min="1"
                   required
                   className="w-full bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm font-medium rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500"
                   value={bidAmount}
                   onChange={(e) => setBidAmount(e.target.value)}
-                  placeholder={`e.g. ${bidModal.currentHighest + 50}`}
+                  placeholder={`e.g. 2400`}
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
