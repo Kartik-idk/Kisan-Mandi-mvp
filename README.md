@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kisan Mandi MVP
 
-## Getting Started
+> A role-based digital mandi workflow for tracking agricultural lots from arrival through auction, settlement, and dispatch.
 
-First, run the development server:
+[Live demo](https://kisan-mandi-mvp.vercel.app)
+
+Kisan Mandi MVP models the day-to-day coordination of a wholesale agricultural market. It gives farmers, agents, merchants, labourers, and managers focused views of the same lot lifecycle—making the market process easier to follow and audit.
+
+## What it demonstrates
+
+- **Farmer workflow:** track lots and their progress through the market.
+- **Agent workflow:** support intake, weighing, and assessment.
+- **Merchant workflow:** view available lots, place validated bids, and follow price history.
+- **Palledar workflow:** manage dispatch-related labour tasks.
+- **Manager workflow:** inspect end-to-end lot traceability across participants.
+- **Shared lifecycle:** Arrived → Weighed & Assessed → Auctioned & Settled → Dispatched.
+- **Market context:** price analytics and MSP benchmark comparisons.
+
+## Tech stack
+
+- Next.js + TypeScript
+- React
+- Supabase
+- Tailwind CSS
+- Recharts
+
+## Run locally
+
+### Prerequisites
+
+- Node.js 20+
+- A Supabase project
+
+### Setup
+
+```bash
+git clone https://github.com/Kartik-idk/Kisan-Mandi-mvp.git
+cd Kisan-Mandi-mvp
+npm install
+```
+
+Create `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Then start the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev     # start the development server
+npm run lint    # run ESLint
+npm run build   # create a production build
+npm run start   # run the production build
+```
 
-## Learn More
+## Project notes
 
-To learn more about Next.js, take a look at the following resources:
+See [walkthrough.md](walkthrough.md) for an implementation walkthrough covering lot traceability, bidding rules, shared timeline behaviour, and price-market context.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Status
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This is an MVP intended to demonstrate a coherent, role-aware mandi operating flow.
