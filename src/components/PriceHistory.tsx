@@ -4,53 +4,81 @@ import { supabase } from "@/lib/supabase";
 import { TrendingUp, Package, ShieldCheck } from "lucide-react";
 import { getMspForCrop } from "@/lib/constants";
 
+interface CropPriceSummary {
+  crop_type: string;
+  avg_price: string;
+  min_price: string;
+  max_price: string;
+  total_trades: number;
+  msp: number | null;
+  spread: string | null;
+}
+
+interface TransactionRecord {
+  price_per_quintal: number | string;
+  lots?: {
+    crop_type?: string;
+    weight_kg?: number;
+  } | null;
+}
+
 export default function PriceHistory({ lang = "EN" }: { lang?: "EN" | "HI" | "KN" }) {
-  const [priceData, setPriceData] = useState<any[]>([]);
+  const [priceData, setPriceData] = useState<CropPriceSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchPriceData();
-    const interval = setInterval(() => fetchPriceData(), 30000);
-    return () => clearInterval(interval);
-  }, []);
+    let isCancelled = false;
 
-  const fetchPriceData = async () => {
-    const { data: allTxData } = await supabase
-      .from("transactions")
-      .select("*, lots(crop_type, weight_kg)");
+    async function loadData() {
+      const { data: allTxData } = await supabase
+        .from("transactions")
+        .select("*, lots(crop_type, weight_kg)");
 
-    if (allTxData) {
-      const grouped: Record<string, { prices: number[]; crop_type: string }> = {};
-      allTxData.forEach((tx: any) => {
-        let crop = tx.lots?.crop_type;
-        if (!crop) return;
-        if (crop === "Rice (Basmati)") crop = "Rice";
-        if (!grouped[crop]) {
-          grouped[crop] = { prices: [], crop_type: crop };
-        }
-        grouped[crop].prices.push(Number(tx.price_per_quintal));
-      });
+      if (isCancelled) return;
 
-      const summary = Object.values(grouped).map((g) => {
-        const avg = g.prices.reduce((a, b) => a + b, 0) / g.prices.length;
-        const msp = getMspForCrop(g.crop_type);
-        const spread = msp ? avg - msp : null;
+      if (allTxData) {
+        const grouped: Record<string, { prices: number[]; crop_type: string }> = {};
+        (allTxData as TransactionRecord[]).forEach((tx) => {
+          let crop = tx.lots?.crop_type;
+          if (!crop) return;
+          if (crop === "Rice (Basmati)") crop = "Rice";
+          if (!grouped[crop]) {
+            grouped[crop] = { prices: [], crop_type: crop };
+          }
+          grouped[crop].prices.push(Number(tx.price_per_quintal));
+        });
 
-        return {
-          crop_type: g.crop_type,
-          avg_price: avg.toFixed(2),
-          min_price: Math.min(...g.prices).toFixed(2),
-          max_price: Math.max(...g.prices).toFixed(2),
-          total_trades: g.prices.length,
-          msp: msp,
-          spread: spread !== null ? spread.toFixed(2) : null
-        };
-      });
+        const summary: CropPriceSummary[] = Object.values(grouped).map((g) => {
+          const avg = g.prices.reduce((a, b) => a + b, 0) / g.prices.length;
+          const msp = getMspForCrop(g.crop_type);
+          const spread = msp ? avg - msp : null;
 
-      setPriceData(summary);
+          return {
+            crop_type: g.crop_type,
+            avg_price: avg.toFixed(2),
+            min_price: Math.min(...g.prices).toFixed(2),
+            max_price: Math.max(...g.prices).toFixed(2),
+            total_trades: g.prices.length,
+            msp: msp,
+            spread: spread !== null ? spread.toFixed(2) : null
+          };
+        });
+
+        setPriceData(summary);
+      }
+      setLoading(false);
     }
-    setLoading(false);
-  };
+
+    void loadData();
+    const interval = setInterval(() => {
+      void loadData();
+    }, 30000);
+
+    return () => {
+      isCancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
   if (loading) return <div className="p-4 text-center">Loading Market Trends...</div>;
 

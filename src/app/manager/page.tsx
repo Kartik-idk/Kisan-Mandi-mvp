@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import PriceHistory from "@/components/PriceHistory";
 import Modal from "@/components/Modal";
@@ -84,8 +85,21 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
 
 import { getMspForCrop } from "@/lib/constants";
 
+interface MarketInsight {
+  crop: string;
+  avg: string;
+  msp: number;
+  diff: string;
+  isAbove: boolean;
+}
+
+interface TransactionWithLot {
+  price_per_quintal?: number;
+  lots?: { crop_type?: string; weight_kg?: number } | null;
+}
+
 function SmartMarketInsight() {
-  const [insight, setInsight] = useState<any>(null);
+  const [insight, setInsight] = useState<MarketInsight | null>(null);
 
   useEffect(() => {
     async function fetchInsight() {
@@ -93,7 +107,7 @@ function SmartMarketInsight() {
       if (allTxData && allTxData.length > 0) {
         // Group by crop
         const grouped: Record<string, { prices: number[]; crop_type: string, count: number }> = {};
-        allTxData.forEach((tx: any) => {
+        allTxData.forEach((tx: TransactionWithLot) => {
           const crop = tx.lots?.crop_type;
           if (!crop) return;
           if (!grouped[crop]) {
@@ -104,7 +118,7 @@ function SmartMarketInsight() {
         });
 
         // Find most traded crop
-        let topCrop = Object.values(grouped).sort((a, b) => b.count - a.count)[0];
+        const topCrop = Object.values(grouped).sort((a, b) => b.count - a.count)[0];
         if (topCrop) {
           const avg = topCrop.prices.reduce((a, b) => a + b, 0) / topCrop.prices.length;
           const msp = getMspForCrop(topCrop.crop_type);
@@ -150,17 +164,52 @@ function SmartMarketInsight() {
   );
 }
 
+interface LotOverview {
+  id: string;
+  crop_type?: string;
+  weight_kg?: number;
+  quality_grade?: string;
+  status?: string;
+  dispatch_status?: string | null;
+  farmer_id?: string;
+  agent_id?: string;
+  created_at: string;
+  farmer?: { name: string };
+  agent?: { name: string };
+}
+
+interface PalledarTask {
+  id: string;
+  task_type?: string;
+  palledar_id?: string;
+  status?: string;
+  palledar?: { name: string };
+}
+
+interface LotDetailData {
+  lot: LotOverview;
+  tx?: {
+    id?: string;
+    merchant_id?: string;
+    total_amount?: number;
+    payment_status?: string;
+    price_per_quintal?: number;
+    merchant?: { name: string };
+  } | null;
+  tasks: PalledarTask[];
+}
+
 function TraceabilityInspector() {
-  const [lots, setLots] = useState<any[]>([]);
+  const [lots, setLots] = useState<LotOverview[]>([]);
   const [selectedLotId, setSelectedLotId] = useState<string>("");
-  const [lotData, setLotData] = useState<any>(null);
+  const [lotData, setLotData] = useState<LotDetailData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   
   useEffect(() => {
     supabase.from("lots").select("*").order("created_at", { ascending: false }).limit(50)
-      .then(({data, error}) => {
+      .then(({ data }) => {
         if (data && data.length > 0) {
-          setLots(data);
+          setLots(data as LotOverview[]);
           setSelectedLotId(data[0].id);
         } else {
           setLots([]);
@@ -175,14 +224,15 @@ function TraceabilityInspector() {
     async function fetchFullLot() {
       setIsLoading(true);
       
-      const { data: lot, error: lotError } = await supabase.from("lots").select("*").eq("id", selectedLotId).maybeSingle();
+      const { data: rawLot } = await supabase.from("lots").select("*").eq("id", selectedLotId).maybeSingle();
       
-      if (!lot) {
+      if (!rawLot) {
         setLotData(null);
         setIsLoading(false);
         return;
       }
 
+      const lot: LotOverview = { ...rawLot };
       let farmerName = 'Not recorded yet';
       let agentName = 'Not recorded yet';
       
@@ -205,9 +255,9 @@ function TraceabilityInspector() {
       }
 
       const { data: rawTasks } = await supabase.from("work_tasks").select("*").eq("lot_id", selectedLotId);
-      const tasks = rawTasks || [];
+      const tasks: PalledarTask[] = rawTasks || [];
       
-      for (let t of tasks) {
+      for (const t of tasks) {
         t.palledar = { name: 'Not recorded yet' };
         if (t.palledar_id) {
           const { data: p } = await supabase.from("users").select("name").eq("id", t.palledar_id).maybeSingle();
@@ -258,7 +308,7 @@ function TraceabilityInspector() {
 
         <div className="mb-8">
           <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Lifecycle Timeline</h3>
-          <LotTimeline status={lot.status} dispatchStatus={lot.dispatch_status} paymentStatus={tx?.payment_status} />
+          <LotTimeline status={lot.status || "ARRIVED"} dispatchStatus={lot.dispatch_status} paymentStatus={tx?.payment_status} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -285,7 +335,7 @@ function TraceabilityInspector() {
           <div className="mt-6 pt-6 border-t border-slate-100">
             <h3 className="text-sm font-bold text-slate-800 mb-3">Associated Palledar Labor</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {tasks.map((t: any) => (
+              {tasks.map((t: PalledarTask) => (
                 <div key={t.id} className="flex justify-between items-center p-3 border border-slate-200 rounded-lg">
                   <div>
                     <div className="font-semibold text-slate-800 text-sm">{t.task_type || 'Unknown Task'}</div>
@@ -303,7 +353,19 @@ function TraceabilityInspector() {
     </div>
   );
 }
+
+interface DailyArrival {
+  name: string;
+  lots: number;
+}
+
+interface CropDistributionItem {
+  name: string;
+  weight: number;
+}
+
 export default function ManagerDashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [loading, setLoading] = useState(true);
 
@@ -316,14 +378,14 @@ export default function ManagerDashboard() {
     totalRevenue: 0,
     activeDisputes: 0,
   });
-  const [dailyArrivals, setDailyArrivals] = useState<any[]>([
+  const [dailyArrivals, setDailyArrivals] = useState<DailyArrival[]>([
     { name: "6 AM", lots: 0 },
     { name: "9 AM", lots: 0 },
     { name: "12 PM", lots: 0 },
     { name: "3 PM", lots: 0 },
     { name: "6 PM", lots: 0 },
   ]);
-  const [cropDistribution, setCropDistribution] = useState<any[]>([]);
+  const [cropDistribution, setCropDistribution] = useState<CropDistributionItem[]>([]);
 
   // Transaction state
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -341,17 +403,17 @@ export default function ManagerDashboard() {
     const checkAuth = async () => {
       const userId = localStorage.getItem("mandi_user_manager");
       if (!userId) {
-        window.location.href = "/";
+        router.push("/");
         return;
       }
       const { data } = await supabase.from("users").select("role").eq("id", userId).limit(1);
       if (!data || data.length === 0 || data[0].role !== "MANAGER") {
         localStorage.removeItem("mandi_user_manager");
-        window.location.href = "/";
+        router.push("/");
       }
     };
     checkAuth();
-  }, []);
+  }, [router]);
 
 
   const fetchOverviewData = useCallback(async (showLoading = true) => {
@@ -432,14 +494,14 @@ export default function ManagerDashboard() {
 
     if (data) {
       setTransactions(
-        data.map((tx: any) => ({
-          id: tx.id,
-          created_at: tx.created_at,
+        data.map((tx: Record<string, unknown>) => ({
+          id: String(tx.id),
+          created_at: String(tx.created_at),
           total_amount: Number(tx.total_amount) || 0,
           deductions: Number(tx.deductions) || 0,
           net_payable: Number(tx.net_payable) || 0,
-          payment_status: tx.payment_status || "PENDING",
-          lot: tx.lot,
+          payment_status: String(tx.payment_status || "PENDING"),
+          lot: tx.lot as { crop_type: string; weight_kg: number } | null,
           price_per_quintal: Number(tx.price_per_quintal) || 0,
         }))
       );
@@ -473,10 +535,13 @@ export default function ManagerDashboard() {
     };
 
     // Initial load
-    if (activeTab === "overview") fetchOverviewData();
-    else if (activeTab === "transactions") fetchTransactions();
-    else if (activeTab === "disputes") fetchDisputes();
-    else setLoading(false);
+    const load = async () => {
+      if (activeTab === "overview") await fetchOverviewData(false);
+      else if (activeTab === "transactions") await fetchTransactions(false);
+      else if (activeTab === "disputes") await fetchDisputes(false);
+      else setLoading(false);
+    };
+    load();
 
     // Polling interval
     const intervalId = setInterval(fetchData, 5000);
@@ -491,7 +556,7 @@ export default function ManagerDashboard() {
     resolution?: string
   ) => {
     setDisputeLoading(true);
-    const updatePayload: any = { status };
+    const updatePayload: Record<string, unknown> = { status };
     if (resolution) updatePayload.resolution = resolution;
 
     await supabase.from("disputes").update(updatePayload).eq("id", id);

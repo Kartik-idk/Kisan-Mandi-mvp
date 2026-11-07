@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Modal from "@/components/Modal";
-import LotTimeline from "@/components/LotTimeline";
 import { formatLotId } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
 import {
@@ -27,6 +27,15 @@ import { Toast } from "@/components/Toast";
 import PriceHistory from "@/components/PriceHistory";
 
 // --- Types ---
+interface UserProfile {
+  id: string;
+  name: string;
+  role: string;
+  phone_number?: string;
+  location?: string;
+  [key: string]: unknown;
+}
+
 interface WorkTask {
   id: string;
   lot_id: string;
@@ -59,8 +68,9 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
 
 // --- Main Component ---
 export default function PalledarDashboard() {
+  const router = useRouter();
   const [tasks, setTasks] = useState<WorkTask[]>([]);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"tasks" | "earnings" | "profile" | "market">("tasks");
@@ -166,20 +176,10 @@ export default function PalledarDashboard() {
   const [completeModal, setCompleteModal] = useState<string | null>(null);
 
 
-  useEffect(() => {
-    fetchData();
-    const interval = setInterval(() => {
-      fetchData(false);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchData = async (showLoading = true) => {
-    if (showLoading) setLoading(true);
-
+  const fetchData = useCallback(async () => {
     const userId = localStorage.getItem("mandi_user_palledar");
     if (!userId) {
-      window.location.href = "/";
+      router.push("/");
       return;
     }
 
@@ -191,24 +191,35 @@ export default function PalledarDashboard() {
       .limit(1);
 
     if (usersData && usersData.length > 0) {
-      setUser(usersData[0]);
+      setUser(usersData[0] as UserProfile);
     } else {
       localStorage.removeItem("mandi_user_palledar");
-      window.location.href = "/";
+      router.push("/");
       return;
     }
 
-      // Fetch work tasks with lot details
-      const { data: tasksData } = await supabase
-        .from("work_tasks")
-        .select("*, lots(crop_type, weight_kg)")
-        .eq("palledar_id", usersData[0].id)
-        .order("created_at", { ascending: false });
+    // Fetch work tasks with lot details
+    const { data: tasksData } = await supabase
+      .from("work_tasks")
+      .select("*, lots(crop_type, weight_kg)")
+      .eq("palledar_id", usersData[0].id)
+      .order("created_at", { ascending: false });
 
-      if (tasksData) setTasks(tasksData);
+    if (tasksData) setTasks(tasksData as WorkTask[]);
 
-    if (showLoading) setLoading(false);
-  };
+    setLoading(false);
+  }, [router]);
+
+  useEffect(() => {
+    const load = async () => {
+      await fetchData();
+    };
+    load();
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [fetchData]);
 
   const updateTaskStatus = async (taskId: string, newStatus: "IN_PROGRESS" | "COMPLETED") => {
     if (newStatus === "COMPLETED") {
@@ -222,7 +233,7 @@ export default function PalledarDashboard() {
     setUpdating(taskId);
     setCompleteModal(null);
 
-    const updatePayload: any = { status: newStatus };
+    const updatePayload: { status: "IN_PROGRESS" | "COMPLETED" } = { status: newStatus };
     const { error } = await supabase.from("work_tasks").update(updatePayload).eq("id", taskId);
 
     if (!error) {
@@ -244,6 +255,16 @@ export default function PalledarDashboard() {
   const paidAmount = completedTasks
     .filter((t) => t.payment_status === "PAID")
     .reduce((sum, t) => sum + (t.payment_amount || 0), 0);
+
+  if (loading && !user) {
+    return (
+      <div className="min-h-screen bg-slate-50 p-4 space-y-4 pt-20">
+        <div className="h-24 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-48 bg-slate-200 rounded-xl animate-pulse"></div>
+        <div className="h-48 bg-slate-200 rounded-xl animate-pulse"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 flex flex-col">
@@ -486,7 +507,7 @@ export default function PalledarDashboard() {
                   <Phone className="h-5 w-5 text-slate-800" />
                   <div>
                     <div className="text-sm text-slate-700">Phone Number</div>
-                    <div className="font-medium text-slate-900">{user.phone_number}</div>
+                    <div className="font-medium text-slate-900">{user?.phone_number}</div>
                   </div>
                 </div>
 
@@ -495,7 +516,7 @@ export default function PalledarDashboard() {
                   <div>
                     <div className="text-sm text-slate-700">Role</div>
                     <div className="font-medium text-slate-900 capitalize">
-                      {user.role?.toLowerCase().replace("_", " ") || "Palledar"}
+                      {user?.role?.toLowerCase().replace("_", " ") || "Palledar"}
                     </div>
                   </div>
                 </div>
@@ -514,7 +535,7 @@ export default function PalledarDashboard() {
                 <button
                   onClick={() => {
                     localStorage.removeItem("mandi_user_palledar");
-                    window.location.href = "/";
+                    router.push("/");
                   }}
                   className="w-full py-3 bg-red-100 border border-red-300 text-red-800 font-semibold rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
                 >
@@ -609,7 +630,7 @@ function TaskCard({
   task: WorkTask;
   updating: string | null;
   onUpdateStatus: (id: string, status: "IN_PROGRESS" | "COMPLETED") => void;
-  t: any;
+  t: Record<string, string>;
 }) {
   const taskConfig = TASK_TYPE_CONFIG[task.task_type] || {
     label: task.task_type,

@@ -1,9 +1,9 @@
-const fs = require('fs');
-const env = fs.readFileSync('.env.local', 'utf8');
-const supabaseUrl = env.match(/NEXT_PUBLIC_SUPABASE_URL=(.*)/)[1].trim();
-const supabaseKey = env.match(/NEXT_PUBLIC_SUPABASE_ANON_KEY=(.*)/)[1].trim();
-
 async function runSeed() {
+  const fs = await import('node:fs');
+  const env = fs.readFileSync('.env.local', 'utf8');
+  const supabaseUrl = env.match(/NEXT_PUBLIC_SUPABASE_URL=(.*)/)[1].trim();
+  const supabaseKey = env.match(/NEXT_PUBLIC_SUPABASE_ANON_KEY=(.*)/)[1].trim();
+
   const headers = {
     'apikey': supabaseKey,
     'Authorization': `Bearer ${supabaseKey}`,
@@ -51,7 +51,7 @@ async function runSeed() {
       payment_status: 'CLEARED'
     })
   });
-  const newTx = await txRes.json();
+  await txRes.json();
   
   const tasksToInsert = [
     { lot_id: auctionedLot.id, palledar_id: palledarId, task_type: 'LOADING', status: 'PENDING' },
@@ -63,7 +63,7 @@ async function runSeed() {
     headers,
     body: JSON.stringify(tasksToInsert)
   });
-  const newTasks = await tasksRes.json();
+  await tasksRes.json();
   
   console.log("Database seeded successfully with demo data!");
 }

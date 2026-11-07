@@ -1,53 +1,91 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import LotTimeline from "@/components/LotTimeline";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { formatLotId } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
 import PriceHistory from "@/components/PriceHistory";
-import { Store, ShoppingCart, TrendingUp, Truck, Package, CheckCircle2 } from "lucide-react";
+import { Store, ShoppingCart, TrendingUp, Truck, Package } from "lucide-react";
 import { Toast } from "@/components/Toast";
 
 type Tab = "supply" | "purchases" | "prices";
 
+interface UserProfile {
+  id: string;
+  name: string;
+  role: string;
+  phone_number?: string;
+  [key: string]: unknown;
+}
+
+interface MerchantLot {
+  id: string;
+  crop_type: string;
+  weight_kg: number;
+  quality_grade: string;
+  status: string;
+  dispatch_status?: string | null;
+  agent_id?: string;
+  created_at: string;
+  users?: { name: string; phone_number?: string } | null;
+  [key: string]: unknown;
+}
+
+interface MerchantPurchase {
+  id: string;
+  lot_id: string;
+  merchant_id: string;
+  amount?: number;
+  total_amount?: number;
+  price_per_quintal?: number;
+  payment_status: string;
+  created_at: string;
+  lots?: MerchantLot;
+  [key: string]: unknown;
+}
+
+interface MerchantBid {
+  id: string;
+  lot_id: string;
+  merchant_id: string;
+  amount: number;
+  status: string;
+  created_at: string;
+  users?: { name: string; phone_number?: string } | null;
+  [key: string]: unknown;
+}
+
 export default function MerchantDashboard() {
-  const [merchant, setMerchant] = useState<any>(null);
-  const [lots, setLots] = useState<any[]>([]);
-  const [purchases, setPurchases] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const [merchant, setMerchant] = useState<UserProfile | null>(null);
+  const [lots, setLots] = useState<MerchantLot[]>([]);
+  const [purchases, setPurchases] = useState<MerchantPurchase[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("supply");
 
   const [toast, setToast] = useState<{msg: string, type: "success"|"error"} | null>(null);
   const [biddedLots, setBiddedLots] = useState<Record<string, boolean>>({});
-  const [allBids, setAllBids] = useState<any[]>([]);
+  const [allBids, setAllBids] = useState<MerchantBid[]>([]);
   
   // Modals
-  const [bidModal, setBidModal] = useState<{lot: any, currentHighest: number} | null>(null);
+  const [bidModal, setBidModal] = useState<{lot: MerchantLot, currentHighest: number} | null>(null);
   const [bidAmount, setBidAmount] = useState<string>("");
   const [submittingBid, setSubmittingBid] = useState(false);
   const [paymentModal, setPaymentModal] = useState<{txId: string} | null>(null);
 
-  useEffect(() => {
-    fetchData();
-    const interval = setInterval(() => { fetchData(false); }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const fetchData = useCallback(async () => {
+    const userId = localStorage.getItem("mandi_user_merchant");
+    if (!userId) {
+      router.push("/");
+      return;
+    }
 
-  const fetchData = async (showLoading = true) => {
-    if (showLoading) setLoading(true);
     // Bids fetch
-    const { data: myBidsData } = await supabase.from('bids').select('*').eq('merchant_id', localStorage.getItem('mandi_user_merchant'));
+    const { data: myBidsData } = await supabase.from('bids').select('*').eq('merchant_id', userId);
     if (myBidsData) {
       const bidded: Record<string, boolean> = {};
       myBidsData.forEach(b => { bidded[b.lot_id] = true; });
       setBiddedLots(bidded);
-    }
-    if (showLoading) setLoading(true);
-
-    const userId = localStorage.getItem("mandi_user_merchant");
-    if (!userId) {
-      window.location.href = "/";
-      return;
     }
 
     // Fetch current merchant user
@@ -58,10 +96,10 @@ export default function MerchantDashboard() {
       .limit(1);
 
     if (userData && userData.length > 0) {
-      setMerchant(userData[0]);
+      setMerchant(userData[0] as UserProfile);
     } else {
       localStorage.removeItem("mandi_user_merchant");
-      window.location.href = "/";
+      router.push("/");
       return;
     }
 
@@ -72,7 +110,7 @@ export default function MerchantDashboard() {
       .eq("status", "WEIGHED")
       .order("created_at", { ascending: false });
 
-    if (lotsData) setLots(lotsData);
+    if (lotsData) setLots(lotsData as MerchantLot[]);
 
     // Fetch purchases (transactions for this merchant)
     const { data: txData } = await supabase
@@ -81,21 +119,30 @@ export default function MerchantDashboard() {
       .eq("merchant_id", userId)
       .order("created_at", { ascending: false });
 
-    if (txData) setPurchases(txData);
+    if (txData) setPurchases(txData as MerchantPurchase[]);
 
     // Fetch all pending bids to show other merchants' bids
     const { data: allBidsData } = await supabase
       .from('bids')
       .select('*, users!bids_merchant_id_fkey(name, phone_number)')
       .eq('status', 'PENDING');
-    if (allBidsData) setAllBids(allBidsData);
+    if (allBidsData) setAllBids(allBidsData as MerchantBid[]);
 
-    
+    setLoading(false);
+  }, [router]);
 
-    if (showLoading) setLoading(false);
-  };
+  useEffect(() => {
+    const load = async () => {
+      await fetchData();
+    };
+    load();
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [fetchData]);
 
-  const handleOpenBidModal = async (lot: any) => {
+  const handleOpenBidModal = async (lot: MerchantLot) => {
     const { data: currentBids } = await supabase
       .from('bids')
       .select('amount')
@@ -181,7 +228,7 @@ export default function MerchantDashboard() {
     const { error } = await supabase.from('transactions').update({ payment_status: 'CLEARED' }).eq('id', paymentModal.txId);
     if (!error) {
       setToast({ msg: "Payment successful!", type: "success" });
-      fetchData(false);
+      fetchData();
     } else {
       setToast({ msg: "Payment failed", type: "error" });
     }
@@ -196,7 +243,7 @@ export default function MerchantDashboard() {
 
     if (!error) {
       setToast({ msg: "Dispatch requested! The lot will be prepared for loading.", type: "success" });
-      fetchData(false);
+      fetchData();
     } else {
       setToast({ msg: "Error requesting dispatch. Please try again.", type: "error" });
     }
@@ -257,7 +304,7 @@ export default function MerchantDashboard() {
               <button
                 onClick={() => {
                   localStorage.removeItem("mandi_user_merchant");
-                  window.location.href = "/";
+                  router.push("/");
                 }}
                 className="text-sm text-blue-200 hover:text-white underline transition-colors"
               >
@@ -511,7 +558,7 @@ export default function MerchantDashboard() {
                               {dispatchStatus === "PENDING" && (
                                 <button
                                   onClick={() =>
-                                    handleRequestDispatch(lot.id)
+                                    lot && handleRequestDispatch(lot.id)
                                   }
                                   className="text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition font-medium"
                                 >

@@ -1,20 +1,71 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import LotTimeline from "@/components/LotTimeline";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { formatLotId } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
 import { Plus, LayoutDashboard, Truck, CheckCircle2, TrendingUp } from "lucide-react";
 import PriceHistory from "@/components/PriceHistory";
 
+interface UserProfile {
+  id: string;
+  name: string;
+  role: string;
+  phone_number?: string;
+  organization?: string;
+}
+
+interface LotRecord {
+  id: string;
+  created_at: string;
+  crop_type: string;
+  weight_kg: number;
+  quality_grade: string;
+  status: string;
+  farmer_id: string;
+  agent_id: string;
+  users?: { name: string; phone_number?: string } | null;
+  transactions?: Array<{
+    id: string;
+    merchant_id: string;
+    users?: { name: string; phone_number?: string } | null;
+  }> | null;
+  [key: string]: unknown;
+}
+
+interface TaskRecord {
+  id: string;
+  created_at: string;
+  task_type: string;
+  payment_amount: number;
+  payment_status?: string | null;
+  status: string;
+  palledar_id: string;
+  lot_id: string;
+  users?: { name: string } | null;
+  [key: string]: unknown;
+}
+
+interface BidRecord {
+  id: string;
+  amount: number;
+  lot_id: string;
+  merchant_id: string;
+  status: string;
+  created_at: string;
+  users?: { name: string; phone_number?: string } | null;
+  [key: string]: unknown;
+}
+
 export default function AgentDashboard() {
-  const [lots, setLots] = useState<any[]>([]);
-  const [farmers, setFarmers] = useState<any[]>([]);
-  const [merchants, setMerchants] = useState<any[]>([]);
-  const [palledars, setPalledars] = useState<any[]>([]);
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [bids, setBids] = useState<any[]>([]);
-  const [agent, setAgent] = useState<any>(null);
+  const router = useRouter();
+  const [lots, setLots] = useState<LotRecord[]>([]);
+  const [farmers, setFarmers] = useState<UserProfile[]>([]);
+  const [merchants, setMerchants] = useState<UserProfile[]>([]);
+  const [palledars, setPalledars] = useState<UserProfile[]>([]);
+  const [tasks, setTasks] = useState<TaskRecord[]>([]);
+  const [bids, setBids] = useState<BidRecord[]>([]);
+  const [agent, setAgent] = useState<UserProfile | null>(null);
   
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
@@ -25,20 +76,10 @@ export default function AgentDashboard() {
   const [weight, setWeight] = useState("");
   const [quality, setQuality] = useState("A");
 
-  useEffect(() => {
-    fetchData();
-    const intervalId = setInterval(() => {
-      fetchData(false);
-    }, 5000);
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const fetchData = async (showLoading = true) => {
-    if (showLoading) setLoading(true);
-    
+  const fetchData = useCallback(async () => {
     const userId = localStorage.getItem("mandi_user_agent");
     if (!userId) {
-      window.location.href = "/";
+      router.push("/");
       return;
     }
 
@@ -51,7 +92,7 @@ export default function AgentDashboard() {
       const agentUser = usersData.find(u => u.id === userId);
       if (!agentUser) {
         localStorage.removeItem("mandi_user_agent");
-        window.location.href = "/";
+        router.push("/");
         return;
       }
       setAgent(agentUser);
@@ -78,12 +119,23 @@ export default function AgentDashboard() {
       setTasks(tasksData);
     }
     
-      // Fetch bids for active lots (fails silently if table doesn't exist)
+    // Fetch bids for active lots (fails silently if table doesn't exist)
     const { data: bidsData } = await supabase.from('bids').select('*, users!bids_merchant_id_fkey(name, phone_number)').eq('status', 'PENDING');
     if (bidsData) setBids(bidsData);
 
-    if (showLoading) setLoading(false);
-  };
+    setLoading(false);
+  }, [router]);
+
+  useEffect(() => {
+    const load = async () => {
+      await fetchData();
+    };
+    load();
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 5000);
+    return () => clearInterval(intervalId);
+  }, [fetchData]);
 
   const handleAddLot = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,19 +163,19 @@ export default function AgentDashboard() {
     }
   };
 
-  const [auctioningLot, setAuctioningLot] = useState<any>(null);
+  const [auctioningLot, setAuctioningLot] = useState<LotRecord | null>(null);
   const [pricePerQuintal, setPricePerQuintal] = useState("");
   const [deductions, setDeductions] = useState("0");
   const [selectedMerchant, setSelectedMerchant] = useState("");
 
   // Palledar task assignment
-  const [taskModal, setTaskModal] = useState<any>(null);
+  const [taskModal, setTaskModal] = useState<LotRecord | null>(null);
   const [taskType, setTaskType] = useState("LOADING");
   const [selectedPalledar, setSelectedPalledar] = useState("");
   const [taskPayment, setTaskPayment] = useState("200");
 
   const updateLotStatus = async (lotId: string, newStatus: string) => {
-    const updatePayload: any = { status: newStatus };
+    const updatePayload: Record<string, unknown> = { status: newStatus };
     if (newStatus === "DISPATCHED") {
       updatePayload.dispatch_status = "DISPATCHED";
     }
@@ -175,7 +227,7 @@ export default function AgentDashboard() {
       setPricePerQuintal("");
       setDeductions("0");
       setSelectedMerchant("");
-      fetchData(false);
+      fetchData();
     } else {
       alert("Error creating transaction");
     }
@@ -211,7 +263,7 @@ export default function AgentDashboard() {
   
   const markTaskPaid = async (taskId: string) => {
     const { error } = await supabase.from("work_tasks").update({ payment_status: 'PAID' }).eq("id", taskId);
-    if (!error) fetchData(false);
+    if (!error) fetchData();
   };
 
   if (loading) {
@@ -412,7 +464,7 @@ export default function AgentDashboard() {
             {agent && (
               <div className="flex items-center gap-4">
                 <div className="text-sm text-slate-600">Logged in as: <strong className="font-semibold text-slate-900">{agent.name}</strong></div>
-                <button onClick={() => window.location.href = "/"} className="text-sm font-medium text-red-700 underline">Sign Out</button>
+                <button onClick={() => router.push("/")} className="text-sm font-medium text-red-700 underline">Sign Out</button>
               </div>
             )}
           </div>

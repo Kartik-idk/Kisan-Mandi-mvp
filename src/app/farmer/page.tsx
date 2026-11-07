@@ -1,17 +1,72 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import LotTimeline from "@/components/LotTimeline";
 import { formatLotId } from "@/lib/constants";
 import { supabase } from "@/lib/supabase";
 import PriceHistory from "@/components/PriceHistory";
-import { Tractor, TrendingUp, Package, CheckCircle2, AlertCircle, FileText, User, Phone, MapPin, X, Smartphone } from "lucide-react";
+import { Tractor, TrendingUp, Package, CheckCircle2, AlertCircle, FileText, User, Phone, MapPin, Smartphone } from "lucide-react";
 import { Toast } from "@/components/Toast";
 
+interface FarmerUser {
+  id: string;
+  name: string;
+  role: string;
+  phone_number?: string;
+  location?: string;
+  [key: string]: unknown;
+}
+
+interface FarmerLot {
+  id: string;
+  farmer_id: string;
+  agent_id: string;
+  crop_type: string;
+  weight_kg: number;
+  quality_grade: string;
+  status: string;
+  dispatch_status?: string | null;
+  created_at: string;
+  users?: { name: string; id: string } | null;
+  [key: string]: unknown;
+}
+
+interface FarmerTransaction {
+  id: string;
+  lot_id: string;
+  merchant_id: string;
+  amount?: number;
+  total_amount?: number;
+  deductions?: number;
+  net_payable_to_farmer?: number;
+  price_per_quintal?: number;
+  created_at: string;
+  lots?: (FarmerLot & { users?: { name: string } | null }) | null;
+  [key: string]: unknown;
+}
+
+interface TranslationBundle {
+  agent: string;
+  grade: string;
+  arrived: string;
+  weighed: string;
+  sold: string;
+  receiptReady: string;
+  raiseDispute: string;
+  viewReceipt: string;
+  pendingAuction: string;
+  reportIssue: string;
+  disputeSuccess: string;
+  disputeError: string;
+  [key: string]: string;
+}
+
 export default function FarmerDashboard() {
-  const [lots, setLots] = useState<any[]>([]);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [farmer, setFarmer] = useState<any>(null);
+  const router = useRouter();
+  const [lots, setLots] = useState<FarmerLot[]>([]);
+  const [transactions, setTransactions] = useState<FarmerTransaction[]>([]);
+  const [farmer, setFarmer] = useState<FarmerUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"lots" | "receipts" | "market" | "profile">("lots");
@@ -19,7 +74,7 @@ export default function FarmerDashboard() {
   const [toast, setToast] = useState<{msg: string, type: "success"|"error"} | null>(null);
 
   // Dispute state
-  const [disputeModal, setDisputeModal] = useState<any>(null);
+  const [disputeModal, setDisputeModal] = useState<FarmerLot | null>(null);
   const [disputeType, setDisputeType] = useState("WEIGHT");
   const [disputeDescription, setDisputeDescription] = useState("");
 
@@ -116,27 +171,17 @@ export default function FarmerDashboard() {
 
   };
 
-  useEffect(() => {
-    fetchData();
-    const interval = setInterval(() => {
-      fetchData(false);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchData = async (showLoading = true) => {
-    if (showLoading) setLoading(true);
-    
+  const fetchData = useCallback(async () => {
     const userId = localStorage.getItem("mandi_user_farmer");
     if (!userId) {
-      window.location.href = "/";
+      router.push("/");
       return;
     }
 
     const { data: usersData } = await supabase.from("users").select("*").eq("id", userId).limit(1);
     
     if (usersData && usersData.length > 0) {
-      const currentFarmer = usersData[0];
+      const currentFarmer = usersData[0] as FarmerUser;
       setFarmer(currentFarmer);
 
       // Get lots for this farmer
@@ -147,7 +192,7 @@ export default function FarmerDashboard() {
         .order("created_at", { ascending: false });
         
       if (lotsData) {
-        setLots(lotsData);
+        setLots(lotsData as FarmerLot[]);
         
         // Fetch transactions for these lots
         const lotIds = lotsData.map(l => l.id);
@@ -158,13 +203,24 @@ export default function FarmerDashboard() {
             .in("lot_id", lotIds)
             .order("created_at", { ascending: false });
             
-          if (txData) setTransactions(txData);
+          if (txData) setTransactions(txData as FarmerTransaction[]);
         }
       }
     }
     
-    if (showLoading) setLoading(false);
-  };
+    setLoading(false);
+  }, [router]);
+
+  useEffect(() => {
+    const load = async () => {
+      await fetchData();
+    };
+    load();
+    const interval = setInterval(() => {
+      fetchData();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [fetchData]);
 
   const submitDispute = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -286,7 +342,7 @@ export default function FarmerDashboard() {
                           <span className="font-bold">Digital J-Form</span>
                         </div>
                         <div className="flex gap-2 items-center">
-                          <button onClick={() => setDisputeModal(tx.lots)} className="text-xs text-white/80 hover:text-white underline">Dispute</button>
+                          <button onClick={() => setDisputeModal(tx.lots || null)} className="text-xs text-white/80 hover:text-white underline">Dispute</button>
                           <span className="text-sm bg-green-700 px-2 py-1 rounded-lg border border-green-500">
                             {new Date(tx.created_at).toLocaleDateString()}
                           </span>
@@ -374,7 +430,7 @@ export default function FarmerDashboard() {
                 
                 <div className="p-4 border-t border-slate-200">
                   <button 
-                    onClick={() => window.location.href = "/"}
+                    onClick={() => router.push("/")}
                     className="w-full py-3 bg-red-100 border border-red-300 text-red-800 font-semibold rounded-lg hover:bg-red-100 transition-colors"
                   >
                     Sign Out
@@ -481,9 +537,17 @@ export default function FarmerDashboard() {
 }
 
 // Helper Component for the Lot Card
-function LotCard({ lot, setDisputeModal, setActiveTab, t }: { lot: any, setDisputeModal: (lot: any) => void, setActiveTab: (tab: any) => void, t: any }) {
-  const isArrived = lot.status === "ARRIVED";
-  const isWeighed = lot.status === "WEIGHED";
+function LotCard({
+  lot,
+  setDisputeModal,
+  setActiveTab,
+  t,
+}: {
+  lot: FarmerLot;
+  setDisputeModal: (lot: FarmerLot) => void;
+  setActiveTab: (tab: "lots" | "receipts" | "market" | "profile") => void;
+  t: TranslationBundle;
+}) {
   const isAuctioned = lot.status === "AUCTIONED" || lot.status === "DISPATCHED";
 
   return (

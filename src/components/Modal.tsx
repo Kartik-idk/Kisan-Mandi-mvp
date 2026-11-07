@@ -8,20 +8,27 @@ interface ModalProps {
 }
 
 export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(isOpen);
 
   useEffect(() => {
     if (isOpen) {
-      setMounted(true);
       document.body.style.overflow = 'hidden';
     } else {
-      setTimeout(() => setMounted(false), 200); // match duration
+      const timer = setTimeout(() => setMounted(false), 200); // match duration
       document.body.style.overflow = 'auto';
+      return () => {
+        clearTimeout(timer);
+        document.body.style.overflow = 'auto';
+      };
     }
     return () => {
       document.body.style.overflow = 'auto';
     };
   }, [isOpen]);
+
+  if (isOpen && !mounted) {
+    setMounted(true);
+  }
 
   if (!isOpen && !mounted) return null;
 

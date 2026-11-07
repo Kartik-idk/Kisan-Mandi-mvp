@@ -39,7 +39,7 @@ export default function AuthPage() {
     setLoading(true);
     setError("");
 
-    const log = (msg: string, data?: any) => {
+    const log = (msg: string, data?: unknown) => {
       fetch('/api/log', { method: 'POST', body: JSON.stringify({ msg, data }) }).catch(() => {});
     };
 
@@ -90,9 +90,10 @@ export default function AuthPage() {
           routeUser(data.role);
         }
       }
-    } catch (err: any) {
-      log("Caught exception!", err?.message);
-      setError(`Crash occurred: ${err?.message || 'Unknown JavaScript error'}`);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'Unknown JavaScript error';
+      log("Caught exception!", errMsg);
+      setError(`Crash occurred: ${errMsg}`);
       setStep("FORM");
     } finally {
       log("Finally block executing");
@@ -205,7 +206,7 @@ export default function AuthPage() {
             <form className="space-y-6" onSubmit={handleVerifyOtp}>
               <div className="text-center bg-slate-50 p-4 rounded-lg mb-4">
                 <p className="text-sm text-green-800">
-                  We've sent a one-time password to<br/>
+                  We&apos;ve sent a one-time password to<br/>
                   <span className="font-bold">{phone}</span>
                 </p>
               </div>
